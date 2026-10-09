@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="короткая задача вместо бесконечного скролла.">
+  <meta name="theme-color" content="#f6f1e8">
+  <title>скучно? — короткая задача вместо скролла</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">к содержанию</a>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="wordmark" href="#main" aria-label="скучно? — к началу">скучно?</a>
+      <a class="settings-link" href="#settings" aria-controls="settings">мои задачи</a>
+    </header>
+
+    <main id="main">
+      <section class="workspace" aria-label="короткая задача">
+        <div class="task-stage" id="task-paper">
+          <div class="empty-task" id="empty-task">
+            <h1 id="welcome-heading">что поделать?</h1>
+            <p class="empty-copy">короткое дело, игра или наблюдение. на одну-две минуты.</p>
+            <button id="start-button" class="primary-button" type="button">дай задачу <span aria-hidden="true">↗</span></button>
+          </div>
+          <div class="active-task" id="active-task" hidden>
+            <p id="task-context" class="task-meta">движение · 30 с</p>
+            <h2 id="task-title" tabindex="-1" aria-describedby="task-context task-help">задание</h2>
+            <p id="task-prompt" class="task-prompt"></p>
+          </div>
+        </div>
+
+        <div class="timer-unit" aria-label="таймер задачи">
+          <div class="timer-dial">
+            <svg class="dial-face" viewBox="0 0 200 200" aria-hidden="true">
+              <circle class="dial-paper" cx="100" cy="100" r="100" />
+              <g class="dial-ticks">
+                <path d="M100 8v10" transform="rotate(0 100 100)" />
+                <path d="M100 8v5" transform="rotate(30 100 100)" />
+                <path d="M100 8v5" transform="rotate(60 100 100)" />
+                <path d="M100 8v10" transform="rotate(90 100 100)" />
+                <path d="M100 8v5" transform="rotate(120 100 100)" />
+                <path d="M100 8v5" transform="rotate(150 100 100)" />
+                <path d="M100 8v10" transform="rotate(180 100 100)" />
+                <path d="M100 8v5" transform="rotate(210 100 100)" />
+                <path d="M100 8v5" transform="rotate(240 100 100)" />
+                <path d="M100 8v10" transform="rotate(270 100 100)" />
+                <path d="M100 8v5" transform="rotate(300 100 100)" />
+                <path d="M100 8v5" transform="rotate(330 100 100)" />
+              </g>
+              <circle class="dial-track" cx="100" cy="100" r="76" />
+              <circle id="timer-progress" class="dial-progress" cx="100" cy="100" r="76" pathLength="100" />
+            </svg>
+            <div class="dial-readout">
+              <span id="timer" class="timer" role="timer" aria-live="off" aria-label="2:00 осталось">2:00</span>
+              <span id="timer-caption" class="timer-caption">до двух минут</span>
+            </div>
+          </div>
+          <p id="timer-note" class="timer-note">две минуты — и можно дальше.</p>
+          <div class="timer-controls" id="timer-controls" hidden>
+            <button id="timer-toggle" class="timer-control" type="button" aria-pressed="false">пауза</button>
+            <button id="timer-reset" class="timer-control" type="button">заново</button>
+          </div>
+        </div>
+
+        <div class="task-actions" id="task-actions" hidden>
+          <button id="done-button" class="action-button action-done" type="button">сделано <span aria-hidden="true">✓</span></button>
+          <button id="skip-button" class="action-button" type="button">пропустить</button>
+          <button id="another-button" class="action-button action-another" type="button" aria-label="ещё одна задача">ещё одна <span aria-hidden="true">↻</span></button>
+        </div>
+        <p class="sr-only" id="task-help">enter — начать · d — сделано · s — пропустить · n — ещё одна</p>
+      </section>
+
+      <p class="quiet-stat" aria-label="локальная статистика"><span>сегодня</span> <strong id="today-count">0</strong><span aria-hidden="true">·</span><span>всего</span> <strong id="completed-count">0</strong></p>
+
+      <details class="settings" id="settings">
+        <summary><span>мои задачи</span><span class="summary-count"><strong id="task-count">0</strong> задач</span></summary>
+        <div class="settings-body">
+          <div class="settings-column">
+            <p class="settings-intro">добавь занятие, которое хочется сделать.</p>
+            <form id="custom-form" class="custom-form">
+              <label>название<input name="title" type="text" maxlength="80" required placeholder="например, разобрать один ящик…"></label>
+              <label>что сделать<input name="prompt" type="text" maxlength="240" required placeholder="выбери один ящик и убери всё лишнее…"></label>
+              <div class="form-row">
+                <label>время
+                  <select name="duration">
+                    <option value="10">10 секунд</option><option value="30">30 секунд</option><option value="60" selected>1 минута</option><option value="120">2 минуты</option>
+                  </select>
+                </label>
+                <label>раздел
+                  <select name="category">
+                    <option value="своё">своё</option><option value="движение">движение</option><option value="внимание">внимание</option><option value="порядок">порядок</option><option value="наблюдение">наблюдение</option><option value="мини-игра">мини-игра</option>
+                  </select>
+                </label>
+              </div>
+              <button id="custom-submit" class="secondary-button" type="submit">добавить задачу</button>
+              <button id="cancel-edit-button" class="text-button" type="button" hidden>отмена</button>
+            </form>
+            <div class="custom-library" aria-labelledby="custom-library-title">
+              <div class="custom-library-heading">
+                <h3 id="custom-library-title">добавленные задачи</h3>
+                <span id="custom-task-count">0</span>
+              </div>
+              <p id="custom-empty" class="custom-empty">пока пусто.</p>
+              <ul id="custom-task-list" class="custom-task-list"></ul>
+            </div>
+          </div>
+          <div class="settings-column settings-tools">
+            <p class="settings-intro">сохрани свои задачи или добавь их из файла.</p>
+            <label class="file-button">добавить из JSON или CSV<input id="import-file" type="file" accept=".json,.csv,application/json,text/csv"></label>
+            <button id="export-button" class="secondary-button" type="button">скачать свои задачи</button>
+            <button id="reset-button" class="text-button" type="button">удалить свои задачи</button>
+            <button id="reset-stats-button" class="text-button" type="button">сбросить статистику</button>
+            <p id="settings-message" class="settings-message" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+      </details>
+    </main>
+  </div>
+  <div id="live-region" class="sr-only" role="status" aria-live="polite"></div>
+  <script src="core.js"></script>
+  <script src="tasks.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

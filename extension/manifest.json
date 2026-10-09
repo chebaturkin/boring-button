@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "скучно? — офлайн-антискролл",
+  "version": "1.1.0",
+  "description": "одна локальная микрозадача на 10–120 секунд с таймером, который сохраняет сессию.",
+  "action": {
+    "default_title": "скучно?",
+    "default_popup": "popup.html"
+  }
+}
