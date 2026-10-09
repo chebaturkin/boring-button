@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="короткая задача вместо бесконечного скролла.">
   <meta name="theme-color" content="#f6f1e8">
+  <link rel="preload" href="assets/fonts/Literata-Variable.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/IBM-Plex-Mono-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <title>скучно? — короткая задача вместо скролла</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,7 +14,7 @@
   <a class="skip-link" href="#main">к содержанию</a>
   <div class="app-shell">
     <header class="topbar">
-      <a class="wordmark" href="#main" aria-label="скучно? — к началу">скучно?</a>
+      <a class="wordmark" translate="no" href="#main" aria-label="скучно? — к началу">скучно?</a>
       <a class="settings-link" href="#settings" aria-controls="settings">мои задачи</a>
     </header>
 
@@ -79,9 +81,9 @@
         <div class="settings-body">
           <div class="settings-column">
             <p class="settings-intro">добавь занятие, которое хочется сделать.</p>
-            <form id="custom-form" class="custom-form">
-              <label>название<input name="title" type="text" maxlength="80" required placeholder="например, разобрать один ящик…"></label>
-              <label>что сделать<input name="prompt" type="text" maxlength="240" required placeholder="выбери один ящик и убери всё лишнее…"></label>
+            <form id="custom-form" class="custom-form" autocomplete="off">
+              <label>название<input name="title" type="text" autocomplete="off" maxlength="80" required placeholder="например, разобрать один ящик…"></label>
+              <label>что сделать<input name="prompt" type="text" autocomplete="off" maxlength="240" required placeholder="выбери один ящик и убери всё лишнее…"></label>
               <div class="form-row">
                 <label>время
                   <select name="duration">
