@@ -52,16 +52,19 @@ const storageKey = 'boring-button-state-v2';
     await page.waitForTimeout(1100);
     assert.equal(await page.locator('#task-copy').evaluate(el => el.getAnimations().length), 0, 'timer ticks never replay delivery');
 
-    await page.evaluate(() => {
+    const rapid = await page.evaluate(key => {
       for (let i = 0; i < 16; i++) document.getElementById('another-button').click();
       document.querySelector('[data-mode="move"]').click();
       document.querySelector('[data-duration="30"]').click();
       document.getElementById('another-button').click();
-    });
-    const session = await page.evaluate(key => JSON.parse(localStorage.getItem(key)).session, storageKey);
-    assert.equal(session.task.category, 'движение');
-    assert.ok(session.task.durationSec <= 30);
-    assert.equal(await page.locator('#task-copy').evaluate(el => el.getAnimations().length), 1, 'rapid delivery replaces the previous animation');
+      return {
+        session: JSON.parse(localStorage.getItem(key)).session,
+        animationCount: document.getElementById('task-copy').getAnimations().length,
+      };
+    }, storageKey);
+    assert.equal(rapid.session.task.category, 'движение');
+    assert.ok(rapid.session.task.durationSec <= 30);
+    assert.equal(rapid.animationCount, 1, 'rapid delivery replaces the previous animation');
     await page.emulateMedia({ reducedMotion: 'reduce' });
     assert.equal(await face.evaluate(el => getComputedStyle(el).transitionDuration), '0s', 'reduced motion disables CSS transitions');
     await page.waitForFunction(() => document.getAnimations().every(animation => animation.playState !== 'running'));
@@ -69,7 +72,12 @@ const storageKey = 'boring-button-state-v2';
     assert.equal(await page.locator('#completion-task').isVisible(), true);
     assert.equal(await page.locator('#completion-title').evaluate(el => el === document.activeElement), true);
     assert.equal(await page.evaluate(() => document.getAnimations().some(animation => animation.playState === 'running')), false);
-    await page.locator('#completion-another').click();
+    await page.locator('#return-button').click();
+    await start.hover();
+    const reducedFace = await face.evaluate(el => getComputedStyle(el).transform);
+    await page.mouse.down();
+    assert.equal(await face.evaluate(el => getComputedStyle(el).transform), reducedFace, 'reduced motion keeps the held surface still');
+    await page.mouse.up();
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.locator('#done-button').click();
     await page.locator('#return-button').click();
