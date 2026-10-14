@@ -29,10 +29,11 @@
     taskCount: $("task-count"), customCount: $("custom-task-count"), customEmpty: $("custom-empty"), customList: $("custom-task-list"),
     live: $("live-region"), form: $("custom-form"), importFile: $("import-file"), export: $("export-button"), reset: $("reset-button"),
     resetStats: $("reset-stats-button"), submit: $("custom-submit"), cancelEdit: $("cancel-edit-button"), message: $("settings-message"), settings: $("settings"), settingsLink: document.querySelector(".settings-link"),
-    panel: $("play-panel"), stageLabel: $("stage-label"), poolNote: $("pool-note"), favorite: $("favorite-button"),
+    heading: $("start-title"), nextPicker: $("next-picker"), nextChoice: $("next-choice"), modeSelect: $("mode-select"),
+    panel: $("play-panel"), poolNote: $("pool-note"), favorite: $("favorite-button"),
     favoriteCount: $("favorite-count"), favoriteList: $("favorite-list"), favoritesEmpty: $("favorites-empty"),
     completion: $("completion-task"), completionTitle: $("completion-title"), taskCopy: $("task-copy"),
-    completionMark: document.querySelector(".completion-mark"), favoriteSymbol: $("favorite-button").querySelector("span"),
+    favoriteSymbol: $("favorite-button").querySelector("span"),
     durationOptions: document.querySelector(".duration-options"), dial: document.querySelector(".dial-face"),
     hideTask: $("hide-task-button"), taskFeedback: $("task-feedback"), poolRecovery: $("pool-recovery"),
     hiddenLibrary: $("hidden-library"), hiddenCount: $("hidden-count"), hiddenEmpty: $("hidden-empty"), hiddenList: $("hidden-task-list"),
@@ -83,7 +84,7 @@
   function markCustomTask(id) {
     const item = [...els.customList.children].find((entry) => entry.dataset.taskId === id);
     feedback(item?.querySelector(".custom-task-copy"), [
-      { backgroundColor: "#f5e642", transform: "translateX(5px)" },
+      { backgroundColor: "#e3e7ff", transform: "translateX(5px)" },
       { backgroundColor: "transparent", transform: "translateX(0)" },
     ], { duration: motion.episode });
   }
@@ -166,9 +167,8 @@
   function allTasks() { return [...baseTasks, ...state.customTasks]; }
   function availableTasks() { return Core.filterTasks(allTasks(), state.preferences, state.favoriteIds, state.hiddenTaskIds); }
   function updateSelection() {
-    document.querySelectorAll("[data-mode]").forEach((button) => {
-      button.setAttribute("aria-pressed", String(button.dataset.mode === state.preferences.mode));
-    });
+    els.modeSelect.value = state.preferences.mode;
+    els.nextChoice.textContent = `для следующего занятия: ${els.modeSelect.selectedOptions[0].textContent} · до ${formatDuration(state.preferences.maxDuration)}`;
     document.querySelectorAll("[data-duration]").forEach((button) => {
       button.setAttribute("aria-pressed", String(Number(button.dataset.duration) === state.preferences.maxDuration));
     });
@@ -236,11 +236,10 @@
       const start = document.createElement("button");
       start.type = "button";
       start.className = "action-button";
-      start.textContent = "начать ↗";
+      start.textContent = "начать";
       start.setAttribute("aria-label", `начать занятие «${task.title}»`);
       start.addEventListener("click", () => {
         showTask(task);
-        els.panel.scrollIntoView({ block: "center" });
       });
       const remove = document.createElement("button");
       remove.type = "button";
@@ -427,13 +426,27 @@
   function newSession(task) {
     return { task, durationSec: task.durationSec, startedAt: Date.now(), pausedAt: null, pausedForMs: 0, status: "running" };
   }
-  function renderActiveTask(task) {
+  function setScene(scene, resetChoice = false) {
+    const sceneChanged = document.body.dataset.scene !== scene;
+    document.body.dataset.scene = scene;
+    els.heading.hidden = scene !== "idle";
+    els.nextPicker.hidden = scene === "complete";
+    if (sceneChanged || resetChoice) els.nextPicker.open = scene === "idle";
+    els.timerUnit.hidden = scene !== "task";
+    els.hideTask.hidden = scene !== "task";
+  }
+  function focusVisible(element) {
+    element.focus({ preventScroll: true });
+    const rect = element.getBoundingClientRect();
+    if (rect.top < 0 || rect.bottom > window.innerHeight) element.scrollIntoView({ block: "start", behavior: "instant" });
+  }
+  function renderActiveTask(task, resetChoice = false) {
+    setScene("task", resetChoice);
     currentTask = task;
     els.taskFeedback.hidden = true;
     document.body.classList.add("has-task");
     els.completion.hidden = true;
     els.panel.classList.remove("is-complete");
-    els.stageLabel.textContent = "02 / маленькое дело";
     els.empty.hidden = true;
     els.active.hidden = false;
     els.timerUnit?.classList.add("is-active");
@@ -457,14 +470,14 @@
     state.drawnIds = [...state.drawnIds.filter((id) => id !== task.id), task.id];
     stopFeedback();
     state.recentIds = [...state.recentIds.filter((id) => id !== task.id), task.id].slice(-8);
-    renderActiveTask(task);
+    renderActiveTask(task, true);
     deliverCard();
     els.timerCaption.textContent = "осталось";
     els.timerNote.textContent = "можно остановиться раньше.";
     els.timer.classList.remove("timer-ended");
     writeState();
     startTimerLoop();
-    els.title.focus({ preventScroll: true });
+    focusVisible(els.title);
     announce(`${categoryLabel(task.category)}. ${task.title}. ${task.prompt}`);
   }
   function restoreSession() {
@@ -490,6 +503,7 @@
     startTimerLoop();
   }
   function resetTaskView(focusStart = true) {
+    setScene("idle");
     stopFeedback();
     stopTimerLoop();
     currentTask = null;
@@ -498,7 +512,6 @@
     state.session = null;
     els.completion.hidden = true;
     els.panel.classList.remove("is-complete");
-    els.stageLabel.textContent = "01 / нажми кнопку";
     els.empty.hidden = false;
     els.active.hidden = true;
     els.timerUnit?.classList.remove("is-active");
@@ -536,7 +549,7 @@
     els.taskFeedback.hidden = false;
     if (!els.start.disabled) els.start.focus({ preventScroll: true });
     else if (!els.poolRecovery.hidden) els.poolRecovery.focus({ preventScroll: true });
-    else document.querySelector('[data-mode="all"]').focus();
+    else els.modeSelect.focus();
   }
   function completeTask(kind) {
     if (!currentTask) return;
@@ -554,16 +567,11 @@
       els.empty.hidden = true;
       els.completion.hidden = false;
       els.panel.classList.add("is-complete");
-      els.stageLabel.textContent = "03 / обратно к своему дню";
-      feedback(els.completionMark, [
-        { opacity: .4, transform: "rotate(-65deg) scale(.82)" },
-        { opacity: 1, transform: "rotate(7deg) scale(1.04)", offset: .7 },
-        { opacity: 1, transform: "rotate(0) scale(1)" },
-      ], { duration: motion.episode });
+      setScene("complete");
       feedback(els.today, [{ opacity: .3 }, { opacity: 1 }]);
-      els.completionTitle.focus({ preventScroll: true });
+      focusVisible(els.completionTitle);
     } else if (!els.start.disabled) els.start.focus();
-    else document.querySelector('[data-mode="all"]').focus();
+    else els.modeSelect.focus();
   }
   function toggleTimer() {
     if (!state.session) return;
@@ -620,14 +628,11 @@
   function beginNewRound() {
     state.drawnIds = currentTask && availableTasks().some((task) => task.id === currentTask.id) ? [currentTask.id] : [];
   }
-  document.querySelectorAll("[data-mode]").forEach((button) => {
-    button.addEventListener("click", () => {
-      if (state.preferences.mode === button.dataset.mode) return;
-      state.preferences.mode = button.dataset.mode;
-      beginNewRound();
-      writeState();
-      feedback(button.querySelector("span"), [{ transform: "rotate(-35deg)" }, { transform: "rotate(0)" }]);
-    });
+  els.modeSelect.addEventListener("change", () => {
+    if (state.preferences.mode === els.modeSelect.value) return;
+    state.preferences.mode = els.modeSelect.value;
+    beginNewRound();
+    writeState();
   });
   document.querySelectorAll("[data-duration]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -649,8 +654,8 @@
   $("completion-another").addEventListener("click", nextTask);
   $("return-button").addEventListener("click", () => {
     resetTaskView(false);
-    if (!els.start.disabled) els.start.focus({ preventScroll: true });
-    else document.querySelector('[data-mode="all"]').focus();
+    if (!els.start.disabled) focusVisible(els.start);
+    else els.modeSelect.focus();
   });
   els.settingsLink?.addEventListener("click", (event) => {
     event.preventDefault();
@@ -823,6 +828,7 @@
     if (key === "n") nextTask();
   });
 
+  setScene("idle");
   refreshToday();
   if (migrationNeeded) writeState();
   else updateStats();

@@ -1,6 +1,7 @@
 // Optional browser regression check; uses the same Playwright as verify-browser.cjs.
 const assert = require('node:assert/strict');
 const { chromium } = require('playwright');
+const { selectMode, selectDuration } = require('./browser-controls.cjs');
 const base = process.env.BORING_BUTTON_URL || 'http://127.0.0.1:8017';
 const storageKey = 'boring-button-state-v2';
 
@@ -54,7 +55,9 @@ const storageKey = 'boring-button-state-v2';
 
     const rapid = await page.evaluate(key => {
       for (let i = 0; i < 16; i++) document.getElementById('another-button').click();
-      document.querySelector('[data-mode="move"]').click();
+      const mode = document.getElementById("mode-select");
+      mode.value = "move";
+      mode.dispatchEvent(new Event("change", { bubbles: true }));
       document.querySelector('[data-duration="30"]').click();
       document.getElementById('another-button').click();
       return {
@@ -152,8 +155,8 @@ const storageKey = 'boring-button-state-v2';
       localStorage.setItem(key, JSON.stringify(state));
     }, storageKey);
     await bulk.reload();
-    await bulk.locator('[data-mode="favorites"]').click();
-    await bulk.locator('[data-duration="120"]').click();
+    await selectMode(bulk, 'favorites');
+    await selectDuration(bulk, 120);
     await bulk.locator('#start-button').click();
     await bulk.locator('#timer-toggle').click();
     const restoredTitle = await bulk.locator('#task-title').textContent();

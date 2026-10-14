@@ -4,46 +4,44 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="когда рука тянется к ленте — нажми кнопку. короткие занятия для перерыва за компьютером: размяться, переключиться или поиграть.">
-  <meta name="theme-color" content="#f5e642">
+  <meta name="theme-color" content="#f7f8fa">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="preload" href="assets/fonts/Literata-Variable.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/fonts/IBM-Plex-Mono-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="icon" href="assets/button.svg" type="image/svg+xml">
-  <title>boring button — нажми. отвлекись. вернись.</title>
+  <title>boring button — короткое занятие для перерыва</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <a class="skip-link" href="#main">к содержанию</a>
   <div class="app-shell">
     <header class="topbar">
-      <a class="wordmark" translate="no" href="." aria-label="boring button — на главную"><span class="brand-dot" aria-hidden="true"></span>boring button<span class="brand-period" aria-hidden="true">↗</span></a>
+      <a class="wordmark" translate="no" href="." aria-label="boring button — на главную"><span class="brand-dot" aria-hidden="true"></span>boring button</a>
       <nav class="topnav" aria-label="навигация">
-        <span class="offline-label"><span aria-hidden="true">●</span> работает офлайн</span>
-        <a class="settings-link" href="#settings" aria-controls="settings">мои задачи <span aria-hidden="true">↗</span></a>
-        <a class="repo-link site-only" href="https://github.com/chebaturkin/boring-button" target="_blank" rel="noopener noreferrer">github <span aria-hidden="true">↗</span></a>
+        <span class="offline-label">после загрузки — без сети</span>
+        <a class="settings-link" href="#settings" aria-controls="settings">мой набор</a>
+        <a class="repo-link site-only" href="https://github.com/chebaturkin/boring-button" target="_blank" rel="noopener noreferrer">github</a>
       </nav>
     </header>
 
     <main id="main">
       <section class="workspace" aria-label="короткий перерыв">
-        <div class="intro-panel">
-          <p class="eyebrow"><span class="tiny-cross" aria-hidden="true">✳</span> маленькая пауза в большом интернете</p>
-          <h1>меньше <br>скролла. <br><em>больше жизни.</em></h1>
-          <p class="intro-copy">завис между делами? выбери короткое занятие,<br class="desktop-break"> отвлекись от экрана и возвращайся.</p>
+        <h1 id="start-title" class="start-title">чем занять паузу</h1>
+        <details id="next-picker" class="next-picker" open>
+          <summary id="next-choice">для следующего занятия</summary>
           <div class="break-picker" id="break-picker">
-            <fieldset class="mode-picker">
-              <legend>как хочется отвлечься?</legend>
-              <div class="mode-options">
-                <button type="button" class="mode-button" data-mode="all" aria-pressed="true"><span aria-hidden="true">✳</span> как угодно</button>
-                <button type="button" class="mode-button" data-mode="move" aria-pressed="false"><span aria-hidden="true">↗</span> размяться</button>
-                <button type="button" class="mode-button" data-mode="switch" aria-pressed="false"><span aria-hidden="true">◉</span> переключиться</button>
-                <button type="button" class="mode-button" data-mode="tidy" aria-pressed="false"><span aria-hidden="true">▦</span> порядок</button>
-                <button type="button" class="mode-button" data-mode="play" aria-pressed="false"><span aria-hidden="true">⚄</span> поиграть</button>
-                <button type="button" class="mode-button" data-mode="favorites" aria-pressed="false"><span aria-hidden="true">♡</span> избранное</button>
-              </div>
-            </fieldset>
+            <label class="mode-picker" for="mode-select">занятие
+              <select id="mode-select" name="mode">
+                <option value="all">как угодно</option>
+                <option value="move">размяться</option>
+                <option value="switch">переключиться</option>
+                <option value="tidy">навести порядок</option>
+                <option value="play">поиграть</option>
+                <option value="favorites">из сохранённых</option>
+              </select>
+            </label>
             <fieldset class="duration-picker">
-              <legend>сколько есть времени?</legend>
+              <legend>сколько есть времени</legend>
               <div class="duration-options">
                 <button type="button" data-duration="30" aria-pressed="false">до 30 сек</button>
                 <button type="button" data-duration="60" aria-pressed="false">до 1 мин</button>
@@ -53,37 +51,31 @@
             <p class="pool-note" id="pool-note" role="status" aria-live="polite"></p>
             <button id="pool-recovery" class="text-button" type="button" hidden>посмотреть скрытые занятия</button>
           </div>
-          <div class="intro-footer"><span>для перерыва за компьютером</span><span aria-hidden="true">↘</span></div>
-        </div>
+        </details>
 
         <div class="play-panel" id="play-panel">
-          <div class="panel-label"><span id="stage-label">01 / нажми кнопку</span><span aria-hidden="true">↙</span></div>
           <div class="task-stage" id="task-paper">
             <div class="empty-task" id="empty-task">
               <div class="button-orbit">
-                <svg class="orbit-text" viewBox="0 0 360 360" aria-hidden="true"><defs><path id="orbit-path" d="M180,180 m-160,0 a160,160 0 1,1 320,0 a160,160 0 1,1 -320,0"/></defs><text><textPath href="#orbit-path">нажми · отвлекись · вернись · нажми · отвлекись · вернись · </textPath></text></svg>
-                <button id="start-button" class="primary-button" type="button"><span class="button-face"><span class="button-star" aria-hidden="true">✳</span><span class="button-label">дай<br>занятие</span><span class="button-arrow" aria-hidden="true">↗</span></span></button>
+                <button id="start-button" class="primary-button" type="button"><span class="button-face"><span class="button-label">дай<br>занятие</span></span></button>
               </div>
-              <p class="button-hint"><kbd>enter</kbd> или просто нажми</p>
+              <p class="button-hint">одно занятие. таймер начнётся сразу.</p>
             </div>
             <div class="active-task" id="active-task" hidden>
               <div class="task-heading-row"><p id="task-context" class="task-meta"></p><button id="favorite-button" class="favorite-button" type="button" aria-pressed="false" aria-label="сохранить в избранное"><span aria-hidden="true">♡</span></button></div>
-              <div id="task-copy"><h2 id="task-title" tabindex="-1" aria-describedby="task-context task-help"></h2>
+              <div id="task-copy"><h1 id="task-title" tabindex="-1" aria-describedby="task-context task-help"></h1>
               <p id="task-prompt" class="task-prompt"></p></div>
-              <button id="hide-task-button" class="text-button task-hide" type="button">не предлагать это занятие</button>
             </div>
             <div class="completion-task" id="completion-task" hidden>
-              <div class="completion-mark" aria-hidden="true">✳</div>
-              <p class="task-meta">пауза состоялась</p>
-              <h2 id="completion-title" tabindex="-1">можно дальше.</h2>
-              <p class="task-prompt">маленькое дело сделано.<br>возвращайся, когда захочется отвлечься.</p>
-              <button id="return-button" class="action-button action-done" type="button">вернуться к началу <span aria-hidden="true">↗</span></button>
+              <h1 id="completion-title" tabindex="-1">пауза закончилась</h1>
+              <p class="task-prompt">можно вернуться к своим делам.</p>
+              <button id="return-button" class="text-button" type="button">к кнопке</button>
               <button id="completion-another" class="text-button" type="button">ещё одно занятие</button>
             </div>
           </div>
 
           <p id="task-feedback" class="task-feedback" role="status" aria-live="polite" hidden></p>
-          <div class="timer-unit" aria-label="таймер занятия">
+          <div class="timer-unit" aria-label="таймер занятия" hidden>
             <div class="timer-dial">
               <svg class="dial-face" viewBox="0 0 200 200" aria-hidden="true">
                 <circle class="dial-paper" cx="100" cy="100" r="97"/>
@@ -94,25 +86,23 @@
               <div class="dial-readout"><span id="timer" class="timer" role="timer" aria-live="off" aria-label="2:00 осталось">2:00</span><span id="timer-caption" class="timer-caption">до двух минут</span></div>
             </div>
             <div class="timer-side"><p id="timer-note" class="timer-note">короткая пауза.<br>и дальше по своим делам.</p><div class="timer-controls" id="timer-controls" hidden><button id="timer-toggle" class="timer-control" type="button" aria-pressed="false">пауза</button><button id="timer-reset" class="timer-control" type="button">заново</button></div></div>
-            <span class="timer-sticker" aria-hidden="true">отдохни<br>чуть-чуть</span>
           </div>
           <div class="task-actions" id="task-actions" hidden>
             <button id="done-button" class="action-button action-done" type="button">сделано <span aria-hidden="true">✓</span></button>
-            <button id="skip-button" class="action-button" type="button">пропустить</button>
-            <button id="another-button" class="action-button action-another" type="button" aria-label="ещё одно занятие">другое <span aria-hidden="true">↻</span></button>
+            <button id="skip-button" class="action-button" type="button">закончить паузу</button>
+            <button id="another-button" class="action-button action-another" type="button" aria-label="ещё одно занятие">другое</button>
           </div>
+          <button id="hide-task-button" class="text-button task-hide" type="button" hidden>больше не предлагать</button>
           <p class="sr-only" id="task-help">d — сделано · s — пропустить · n — другое занятие. таймер можно поставить на паузу.</p>
-          <div class="panel-bottom"><span>никаких великих свершений</span><span aria-hidden="true">☺</span></div>
         </div>
       </section>
 
-      <div class="under-workspace"><p class="quiet-stat" aria-label="локальная статистика"><span class="stat-dot" aria-hidden="true"></span> пауз сегодня <strong id="today-count">0</strong><span class="stat-divider" aria-hidden="true">/</span> всего <strong id="completed-count">0</strong></p><p class="privacy-note">без аккаунта. всё остаётся у тебя.</p></div>
+      <div class="under-workspace"><p class="quiet-stat" aria-label="локальная статистика">завершено сегодня <strong id="today-count">0</strong><span class="stat-divider" aria-hidden="true">/</span> всего <strong id="completed-count">0</strong></p><p class="privacy-note">без аккаунта. всё остаётся у тебя.</p></div>
 
-      <section class="about-strip" aria-label="как это работает"><div><span class="step-number">01</span><p>когда рука<br>тянется к ленте</p></div><span class="step-arrow" aria-hidden="true">→</span><div><span class="step-number">02</span><p>одно маленькое дело<br>на пару минут</p></div><span class="step-arrow" aria-hidden="true">→</span><div><span class="step-number">03</span><p>и обратно<br>к своему дню</p></div><span class="strip-spark" aria-hidden="true">✳</span></section>
 
       <details class="favorites-library" id="favorites-library">
-        <summary><span>любимые занятия</span><span class="summary-count"><strong id="favorite-count">0</strong> сохранено</span></summary>
-        <div class="library-body"><p id="favorites-empty" class="custom-empty">нажми ♡ на карточке занятия — оно появится здесь.</p><p id="favorites-note" class="custom-empty" hidden>здесь можно начать любое сохранённое занятие. фильтр времени действует на случайный выбор кнопкой.</p><ul id="favorite-list" class="favorite-list"></ul></div>
+        <summary><span>сохранённые занятия</span><span class="summary-count"><strong id="favorite-count">0</strong> сохранено</span></summary>
+        <div class="library-body"><p id="favorites-empty" class="custom-empty">нажми ♡ у занятия — оно появится здесь.</p><p id="favorites-note" class="custom-empty" hidden>здесь можно начать любое сохранённое занятие. фильтр времени действует на случайный выбор кнопкой.</p><ul id="favorite-list" class="favorite-list"></ul></div>
       </details>
       <details class="settings" id="settings">
         <summary><span>мои задачи</span><span class="summary-count"><strong id="task-count">0</strong> в наборе</span></summary>
@@ -121,7 +111,7 @@
             <p class="settings-intro">добавь занятие, которое хочется сделать.</p>
             <form id="custom-form" class="custom-form" autocomplete="off">
               <label>название<input name="title" type="text" maxlength="80" required placeholder="например, полить цветок"></label>
-              <label>что сделать<input name="prompt" type="text" maxlength="240" required placeholder="проверь землю и полей, если она сухая"></label>
+              <label>что сделать<textarea name="prompt" rows="3" maxlength="240" required placeholder="проверь землю и полей, если она сухая"></textarea></label>
               <div class="form-row"><label>время<select name="duration"><option value="10">10 секунд</option><option value="30">30 секунд</option><option value="60" selected>1 минута</option><option value="120">2 минуты</option></select></label><label>раздел<select name="category"><option value="своё">своё</option><option value="движение">движение</option><option value="внимание">внимание</option><option value="порядок">порядок</option><option value="наблюдение">наблюдение</option><option value="мини-игра">мини-игра</option></select></label></div>
               <button id="custom-submit" class="secondary-button" type="submit">добавить задачу</button><button id="cancel-edit-button" class="text-button" type="button" hidden>отмена</button>
             </form>
@@ -135,7 +125,7 @@
         </details>
       </details>
     </main>
-    <footer class="footer"><span>boring button © 2026</span><span>маленький проект Тимофея Чебатуркина</span><a class="site-only" href="https://github.com/chebaturkin/boring-button#расширение" target="_blank" rel="noopener noreferrer">установить расширение ↗</a></footer>
+    <footer class="footer"><span>boring button © 2026</span><span>маленький проект Тимофея Чебатуркина</span><a class="site-only" href="https://github.com/chebaturkin/boring-button#расширение" target="_blank" rel="noopener noreferrer">установить расширение</a></footer>
   </div>
   <div id="live-region" class="sr-only" role="status" aria-live="polite"></div>
   <script src="core.js"></script><script src="tasks.js"></script><script src="app.js"></script>

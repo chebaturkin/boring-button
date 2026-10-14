@@ -1,6 +1,7 @@
 // Optional browser regression checks. Playwright is a development tool only.
 const assert = require('node:assert/strict');
 const { chromium } = require('playwright');
+const { selectMode, selectDuration } = require('./browser-controls.cjs');
 const base = process.env.BORING_BUTTON_URL || 'http://127.0.0.1:8017';
 const storageKey = 'boring-button-state-v2';
 
@@ -64,13 +65,13 @@ const storageKey = 'boring-button-state-v2';
     await page.locator('#another-button').click();
     assert.notEqual((await stored()).session.task.id, shown.at(-1));
     const session = (await stored()).session;
-    await page.locator('[data-mode="move"]').click();
+    await selectMode(page, 'move');
     assert.equal((await stored()).session.startedAt, session.startedAt, 'changing a filter preserves the active timer');
     const currentFits = await page.evaluate(id => window.BoringButtonCore.filterTasks(window.BoringButtonTasks, { mode: 'move' }).some(task => task.id === id), session.task.id);
     assert.deepEqual((await stored()).drawnIds, currentFits ? [session.task.id] : []);
 
     // Hiding is local, reversible, and independent of completion or skipping.
-    await page.locator('[data-mode="all"]').click();
+    await selectMode(page, 'all');
     assert.deepEqual((await stored()).drawnIds, [session.task.id]);
     await page.locator('#done-button').click();
     await page.locator('#completion-another').click();
@@ -85,7 +86,7 @@ const storageKey = 'boring-button-state-v2';
     assert.equal((await stored()).completed, counts.completed);
     assert.equal((await stored()).skipped, counts.skipped);
     assert.equal(await page.locator('#task-feedback').isVisible(), true);
-    await page.locator('[data-mode="favorites"]').click();
+    await selectMode(page, 'favorites');
     assert.equal(await page.locator('#start-button').isDisabled(), true);
     assert.equal(await page.locator('#pool-recovery').isVisible(), true);
     await reload();
@@ -114,7 +115,7 @@ const storageKey = 'boring-button-state-v2';
     console.log('hiding, restoration and cross-tab state passed');
 
     // Mobile and popup: new controls, empty pool and hidden library fit.
-    await page.locator('[data-mode="all"]').click();
+    await selectMode(page, 'all');
     for (const path of ['', '/extension/popup.html']) {
       await open(path);
       for (const width of [320, 360, 740, 1440]) {

@@ -1,6 +1,7 @@
 // Optional development check. Requires Playwright; the app itself has no dependencies.
 const assert = require('node:assert/strict');
 const { chromium } = require('playwright');
+const { selectMode, selectDuration } = require('./browser-controls.cjs');
 const base = process.env.BORING_BUTTON_URL || 'http://127.0.0.1:8017';
 const storageKey = 'boring-button-state-v2';
 
@@ -21,11 +22,11 @@ const storageKey = 'boring-button-state-v2';
     assert.match(await page.title(), /boring button/);
 
     // Empty favorites give a visible next step and never bypass the selection.
-    await page.locator('[data-mode="favorites"]').click();
+    await selectMode(page, 'favorites');
     assert.equal(await page.locator('#start-button').isDisabled(), true);
     assert.match(await page.locator('#pool-note').textContent(), /сохрани/);
-    await page.locator('[data-mode="move"]').click();
-    await page.locator('[data-duration="30"]').click();
+    await selectMode(page, 'move');
+    await selectDuration(page, 30);
     await page.locator('#start-button').click();
     assert.equal((await stored()).session.task.category, 'движение');
     assert.ok((await stored()).session.task.durationSec <= 30);
@@ -40,7 +41,7 @@ const storageKey = 'boring-button-state-v2';
     assert.equal(await page.locator('#favorite-button').getAttribute('aria-pressed'), 'true');
     await page.locator('#timer-toggle').click();
     assert.equal((await stored()).session.status, 'running');
-    await page.locator('[data-duration="60"]').click();
+    await selectDuration(page, 60);
     assert.equal((await stored()).session.task.id, firstId, 'changing preferences preserves the current break');
     await page.locator('#timer-reset').click();
     assert.equal((await stored()).session.durationSec, (await stored()).session.task.durationSec);
@@ -49,12 +50,12 @@ const storageKey = 'boring-button-state-v2';
     assert.equal((await stored()).completed, 1);
     assert.equal((await stored()).session, null);
     await page.locator('#return-button').click();
-    await page.locator('[data-mode="favorites"]').click();
+    await selectMode(page, 'favorites');
     await page.locator('#start-button').click();
     assert.equal((await stored()).session.task.id, firstId);
     await page.locator('#skip-button').click();
     assert.equal((await stored()).skipped, 1);
-    await page.locator('[data-mode="all"]').click();
+    await selectMode(page, 'all');
     await page.locator('#start-button').click();
     const before = (await stored()).session.task.id;
     await page.locator('#another-button').click();
@@ -114,8 +115,8 @@ const storageKey = 'boring-button-state-v2';
     // All break modes respect their category and time budget.
     const categories = { move: ['движение'], switch: ['внимание', 'наблюдение'], tidy: ['порядок'], play: ['мини-игра'] };
     for (const [mode, allowed] of Object.entries(categories)) {
-      await page.locator(`[data-mode="${mode}"]`).click();
-      await page.locator('[data-duration="30"]').click();
+      await selectMode(page, mode);
+      await selectDuration(page, 30);
       await page.locator('#start-button').click();
       const task = (await stored()).session.task;
       assert.ok(allowed.includes(task.category));

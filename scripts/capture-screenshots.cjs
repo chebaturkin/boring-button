@@ -1,5 +1,6 @@
 // Real interface screenshots, without compositing or replacing UI content.
 const { chromium } = require('playwright');
+const { selectMode, selectDuration } = require('./browser-controls.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 const base = process.env.BORING_BUTTON_URL || 'http://127.0.0.1:8017';
@@ -18,8 +19,8 @@ const root = path.resolve(__dirname, '..');
     const capture = name => page.screenshot({ path: path.join(root, 'docs/screenshots', name), fullPage: true, animations: 'disabled' });
     fs.mkdirSync(path.join(root, 'docs/screenshots'), { recursive: true });
     await capture('desktop.png');
-    await page.locator('[data-mode="move"]').click();
-    await page.locator('[data-duration="30"]').click();
+    await selectMode(page, 'move');
+    await selectDuration(page, 30);
     await page.locator('#start-button').click();
     await page.locator('#timer-toggle').click();
     await capture('active-task.png');
