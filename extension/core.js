@@ -11,6 +11,31 @@
   const MAX_PROMPT_LENGTH = 240;
   const MAX_CUSTOM_TASKS = 200;
   const CATEGORIES = new Set(["movement", "attention", "order", "observation", "game", "custom", "движение", "внимание", "порядок", "наблюдение", "мини-игра", "своё"]);
+  const MODES = new Set(["all", "move", "switch", "tidy", "play", "favorites"]);
+  const MODE_CATEGORIES = {
+    move: ["movement", "движение"],
+    switch: ["attention", "внимание", "observation", "наблюдение"],
+    tidy: ["order", "порядок"],
+    play: ["game", "мини-игра"],
+  };
+
+  function sanitizePreferences(raw) {
+    return {
+      mode: MODES.has(raw?.mode) ? raw.mode : "all",
+      maxDuration: [30, 60, 120].includes(Number(raw?.maxDuration)) ? Number(raw.maxDuration) : 120,
+    };
+  }
+  function filterTasks(tasks, preferences = {}, favoriteIds = [], hiddenTaskIds = []) {
+    const { mode, maxDuration } = sanitizePreferences(preferences);
+    const favorites = new Set(Array.isArray(favoriteIds) ? favoriteIds : []);
+    const hidden = new Set(Array.isArray(hiddenTaskIds) ? hiddenTaskIds : []);
+    return (Array.isArray(tasks) ? tasks : []).filter((task) => {
+      if (hidden.has(task.id)) return false;
+      if (task.durationSec > maxDuration) return false;
+      if (mode === "favorites") return favorites.has(task.id);
+      return mode === "all" || MODE_CATEGORIES[mode].includes(task.category);
+    });
+  }
 
   function pad(value) { return String(value).padStart(2, "0"); }
   function todayKey(date = new Date()) {
@@ -80,7 +105,7 @@
         value += char;
       }
     }
-    if (quoted) throw new Error("В CSV осталась незакрытая кавычка.");
+    if (quoted) throw new Error("в csv осталась незакрытая кавычка. закрой её и попробуй ещё раз.");
     row.push(value.trim());
     if (row.some((cell) => cell !== "")) rows.push(row);
     return rows;
@@ -137,6 +162,9 @@
     const number = Number(value);
     return Number.isFinite(number) && Number.isInteger(number) && number >= 0 ? number : 0;
   }
+  function sanitizeIds(raw) {
+    return Array.isArray(raw) ? [...new Set(raw.filter((id) => typeof id === "string" && id.trim()))].slice(0, 400) : [];
+  }
   function sanitizeSession(raw) {
     if (!raw || typeof raw !== "object") return null;
     const task = normalizeTask(raw.task, text(raw.task?.id) || createId("session"));
@@ -163,7 +191,43 @@
       todayCompleted: rawDay === today ? nonNegativeInt(source.todayCompleted) : 0,
       day: today,
       recentIds: Array.isArray(source.recentIds) ? source.recentIds.filter((id) => typeof id === "string").slice(-8) : [],
+      drawnIds: sanitizeIds(source.drawnIds),
+      hiddenTaskIds: sanitizeIds(source.hiddenTaskIds),
+      favoriteIds: Array.isArray(source.favoriteIds) ? [...new Set(source.favoriteIds.filter((id) => typeof id === "string"))].slice(0, 400) : [],
+      preferences: sanitizePreferences(source.preferences),
       session: sanitizeSession(source.session),
+    };
+  }
+
+  function reconcileTaskIds(state, baseTasks) {
+    const baseIds = new Set(baseTasks.map((task) => task.id));
+    const usedIds = new Set([...baseIds, ...state.customTasks.map((task) => task.id)]);
+    const renamed = new Map();
+    const customTasks = state.customTasks.map((task) => {
+      if (!baseIds.has(task.id)) return task;
+      let id = `custom-${task.id}`;
+      let suffix = 2;
+      while (usedIds.has(id)) id = `custom-${task.id}-${suffix++}`;
+      usedIds.add(id);
+      renamed.set(task.id, id);
+      return { ...task, id };
+    });
+    if (!renamed.size) return state;
+    // An active custom task can have an older snapshot than its edited library
+    // entry. Compare against the built-in task before assigning its new id.
+    const session = state.session;
+    const activeCustom = session && renamed.has(session.task.id) && !baseTasks.some((task) =>
+      task.id === session.task.id && taskIdentity(task) === taskIdentity(session.task));
+    return {
+      ...state,
+      customTasks,
+      favoriteIds: state.favoriteIds.map((id) => renamed.get(id) || id),
+      recentIds: state.recentIds.map((id) => renamed.get(id) || id),
+      drawnIds: state.drawnIds.map((id) => renamed.get(id) || id),
+      hiddenTaskIds: state.hiddenTaskIds.map((id) => renamed.get(id) || id),
+      session: activeCustom
+        ? { ...session, task: { ...session.task, id: renamed.get(session.task.id) } }
+        : session,
     };
   }
 
@@ -186,6 +250,25 @@
     return Math.max(0, Math.ceil((totalMs - elapsedMs) / 1000));
   }
 
+  // A round belongs to the current filtered pool. Keep only live ids so a
+  // newly imported or restored task can enter the round immediately.
+  function drawTask(tasks, currentId = null, drawnIds = [], random = Math.random) {
+    const list = Array.isArray(tasks) ? tasks : [];
+    if (!list.length) return { task: null, drawnIds: [] };
+    const availableIds = new Set(list.map((task) => task.id));
+    let seen = sanitizeIds(drawnIds).filter((id) => availableIds.has(id));
+    if (availableIds.has(currentId) && !seen.includes(currentId)) seen.push(currentId);
+    const seenIds = new Set(seen);
+    let pool = list.filter((task) => !seenIds.has(task.id));
+    if (!pool.length) {
+      seen = [];
+      pool = list;
+    }
+    const previousId = currentId || (Array.isArray(drawnIds) ? drawnIds.at(-1) : null);
+    const task = chooseTask(pool, previousId, [], random);
+    return { task, drawnIds: [...seen, task.id] };
+  }
+
   return {
     CATEGORIES,
     MAX_DURATION,
@@ -200,7 +283,10 @@
     mergeCustomTasks,
     sanitizeState,
     chooseTask,
+    drawTask,
     remainingFromSession,
+    filterTasks,
+    reconcileTaskIds,
     taskIdentity,
   };
 });
