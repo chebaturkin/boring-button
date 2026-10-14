@@ -17,7 +17,7 @@ test('all shipped task libraries match tasks.json', () => {
 });
 
 test('website and popup ship the same behavior and styles', () => {
-  for (const [source, copy] of [['app.js', 'extension/popup.js'], ['core.js', 'extension/core.js'], ['styles.css', 'extension/styles.css'], ['assets/button.svg', 'extension/assets/button.svg']]) {
+  for (const [source, copy] of [['i18n.js', 'extension/i18n.js'], ['app.js', 'extension/popup.js'], ['core.js', 'extension/core.js'], ['styles.css', 'extension/styles.css'], ['assets/button.svg', 'extension/assets/button.svg']]) {
     assert.equal(read(copy), read(source), `${copy} is out of sync; run node scripts/sync-ui.js`);
   }
 });

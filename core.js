@@ -1,3 +1,4 @@
+const t = (...args) => globalThis.I18n.t(...args);
 (function (root, factory) {
   const api = factory();
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
@@ -105,7 +106,7 @@
         value += char;
       }
     }
-    if (quoted) throw new Error("в csv осталась незакрытая кавычка. закройте её и попробуйте ещё раз.");
+    if (quoted) throw new Error(t("s149"));
     row.push(value.trim());
     if (row.some((cell) => cell !== "")) rows.push(row);
     return rows;

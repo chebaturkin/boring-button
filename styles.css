@@ -1197,3 +1197,20 @@ details[open]>summary::after {
   }
 
 }
+
+/* Language follows the existing header typography. */
+.locale-switch { display: inline-flex; align-items: center; gap: .25rem; color: var(--muted, #777); white-space: nowrap; flex: 0 0 auto; font: inherit; font-size: .75rem; }
+.locale-switch button { appearance: none; min-height: 32px; padding: .25rem .15rem; color: inherit; background: transparent; border: 0; border-radius: 0; box-shadow: none; font: inherit; cursor: pointer; text-underline-offset: .25em; }
+.locale-switch button[aria-pressed="true"] { color: var(--ink, #242725); text-decoration: underline; font-weight: 600; }
+.locale-switch button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+@media (max-width: 700px) {
+  .topnav .repo-link { display: none; }
+  .topbar { flex-wrap: wrap; gap: 0 12px; padding-block: 8px; }
+  .topnav { margin-left: auto; gap: 12px; }
+}
+@media (max-width: 390px) {
+  html[lang="en"] .duration-options button { min-width: 0; padding-inline: 4px; font-size: 12px; }
+}
+@media (max-width: 350px) {
+  .duration-options button { min-width: 0; padding-inline: 4px; font-size: 12px; }
+}

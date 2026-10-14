@@ -1,132 +1,136 @@
-<p><img src="assets/button.svg" width="64" height="64" alt="синяя кнопка на светлом фоне"></p>
+<p><img src="assets/button.svg" width="64" height="64" alt="a blue button on a pale background"></p>
 
 # boring button
 
-короткие занятия для перерыва за компьютером. выберите настроение и время, нажмите кнопку и получите одно дело: размяться, переключиться, навести порядок или поиграть. пауза занимает от 10 секунд до двух минут.
+english · [русский](README.ru.md)
 
-**[нажать кнопку →](https://chebaturkin.github.io/boring-button/)** · [установить расширение](#расширение) · [запустить локально](#разработка)
+short activities for a break at your computer. choose a mood and duration, press the button and get one thing to do: move, reset, tidy up or play. a pause takes between 10 seconds and two minutes.
 
-![главный экран boring button с выбором занятия, времени и синей кнопкой](docs/screenshots/desktop.png)
+**[press the button →](https://chebaturkin.github.io/boring-button/?lang=en)** · [extension](#extension) · [local development](#development) · [русская версия](https://chebaturkin.github.io/boring-button/?lang=ru)
 
-## как пользоваться
+![boring button with activity and duration controls and its blue button](docs/screenshots/en/desktop.png)
 
-1. выберите занятие и время. можно оставить «как угодно» и «до 2 мин»;
-2. нажмите **«дайте занятие»**. таймер начнётся сам;
-3. выполните задание. если оно не подходит, нажмите **«другое»** или **«закончить паузу»**;
-4. нажмите **«сделано»**, когда закончите. можно вернуться к своим делам.
+## taking a break
 
-в библиотеке 60 занятий. в выбранном наборе они не повторяются, пока не покажутся все; история сохраняется между открытиями. смена настроения или времени начинает новый круг. если доступно одно занятие, оно может повторяться. фильтры меняют следующий выбор и сохраняют текущий таймер.
+1. choose an activity and duration, or leave “anything” and “up to 2 min”.
+2. press **“find an activity”**. the timer starts automatically.
+3. do the activity. use **“another”** or **“end the break”** if it does not fit.
+4. press **“done”** when you finish and get back to your day.
 
-## ваш набор
+the library has 60 activities, all available in english and russian. a collection does not repeat until every activity has appeared; that history survives reopening. changing the mood or duration starts a new round. a collection with one activity can repeat. filters affect the next pick and keep your current timer running.
 
-- **избранное.** нажмите ♡ у занятия. в разделе «сохранённые занятия» можно начать конкретное, а режим «из сохранённых» выбирает случайное с учётом времени;
-- **скрытые занятия.** кнопка «больше не предлагать» убирает занятие из выбора и списка сохранённых. вернуть его можно через «мой набор → скрытые занятия → вернуть». отметка избранного сохраняется; скрытие не считается выполнением или пропуском;
-- **таймер.** его можно приостановить, продолжить и начать заново. занятие и таймер восстанавливаются после закрытия страницы или popup;
-- **свои задачи.** добавляйте, редактируйте и переносите их через json или csv;
-- **счётчики.** завершённые паузы за сегодня и за всё время хранятся локально.
+the quiet **ru / en** control changes the interface in place. a `?lang=en` or `?lang=ru` link takes priority, followed by your saved choice, the first supported browser language, and english. switching keeps your timer, selections and unfinished form. your own task text stays as you wrote it.
 
-если подходящих занятий нет, интерфейс предлагает добавить времени, сменить раздел или вернуть скрытое.
+## your collection
+
+- **favorites:** press ♡ to save an activity. start a specific one from saved activities, or choose a random favorite within your time limit.
+- **hidden activities:** “stop suggesting this” removes an activity from random picks and the saved list. restore it through “my collection → hidden activities → restore”. its favorite mark is retained; hiding does not count as completion or skipping.
+- **timer:** pause, resume or restart it. the active task and timer return after reopening the page or popup.
+- **custom tasks:** add, edit and move your tasks through json or csv.
+- **counters:** today's and all time completed breaks are stored locally.
+
+if no activity matches, the interface suggests more time, another category or restoring a hidden activity.
 
 <details>
-<summary>занятие с таймером, расширение и мобильный экран</summary>
+<summary>an active task, extension popup and mobile screen</summary>
 
-![занятие с таймером на паузе и кнопками завершения](docs/screenshots/active-task.png)
+![an activity with a paused timer and completion controls](docs/screenshots/en/active-task.png)
 
-<p><img src="docs/screenshots/popup.png" width="320" alt="popup расширения с выбором занятия и синей кнопкой"></p>
-
-<p><img src="docs/screenshots/mobile.png" width="390" alt="мобильный экран с активным занятием и таймером"></p>
+<p><img src="docs/screenshots/en/popup.png" width="320" alt="extension popup with activity controls and the blue button"></p>
+<p><img src="docs/screenshots/en/mobile.png" width="390" alt="mobile screen with an active task and timer"></p>
 
 </details>
 
-скриншоты сняты с работающего приложения. сайт и расширение используют общие стили и логику. системная настройка уменьшения движения отключает анимации.
+these are screenshots of the working application. the site and extension share styles and behavior. your system's reduced motion preference disables animations.
 
-## расширение
+## extension
 
-распакованное расширение manifest v3 для chrome и edge. в каталоге браузера пока не опубликовано.
+a manifest v3 extension for chrome and edge, installed unpacked. it is not published in a browser store.
 
-1. [скачайте репозиторий](https://github.com/chebaturkin/boring-button/archive/refs/heads/main.zip) и распакуйте;
-2. откройте `chrome://extensions` или `edge://extensions`;
-3. включите **Developer mode**;
-4. нажмите **Load unpacked** и выберите папку `extension/`;
-5. закрепите boring button на панели браузера.
+1. [download the repository](https://github.com/chebaturkin/boring-button/archive/refs/heads/main.zip) and unpack it.
+2. open `chrome://extensions` or `edge://extensions`.
+3. enable **Developer mode**.
+4. choose **Load unpacked** and select `extension/`.
+5. pin boring button in your browser toolbar.
 
-запущенный таймер продолжает идти по времени устройства после закрытия popup. таймер на паузе остаётся на паузе. подробности есть в [инструкции расширения](extension/README.md).
+a running timer continues against your device clock when the popup closes. a paused timer stays paused. see the [extension instructions](extension/README.md).
 
-## данные остаются у вас
+## data stays with you
 
-сайт загружает только свои файлы. после загрузки занятия, шрифты, таймер и работа с файлами не обращаются к сети. страницу можно открыть прямо из папки через `file://`. расширение работает офлайн.
+the site loads only its own files. after loading, activities, fonts, timers and file operations make no network requests. you can open `index.html` directly with `file://`. the extension works offline.
 
-аккаунтов, рекламы, аналитики и ai нет. в manifest отсутствуют `permissions`, `host_permissions` и content scripts: расширение не читает вкладки, историю или содержимое страниц.
+there are no accounts, ads, analytics or ai. the manifest has no `permissions`, `host_permissions` or content scripts: it does not read tabs, history or page contents.
 
-в `localStorage` хранятся свои задачи, избранное, скрытые занятия, история выбора, настройки, счётчики и активное занятие. сайт и расширение хранят данные отдельно; синхронизации между устройствами нет. импорт и экспорт обрабатываются в браузере. экспорт переносит только свои задачи. удаление своих задач и сброс статистики требуют подтверждения.
+`localStorage` holds custom tasks, favorites, hidden activities, selection history, preferences, counters and the current activity. the language choice uses a separate key. the site and extension keep separate data; there is no device sync. imports and exports run in the browser. exports contain only custom tasks. deleting your tasks and resetting statistics ask for confirmation.
 
-## клавиатура
+## keyboard
 
-| клавиша | действие |
+| key | action |
 | --- | --- |
-| `Enter` | начать занятие или получить следующее |
-| `D` | отметить сделанное |
-| `S` / `Escape` | пропустить; `Escape` также закрывает настройки |
-| `N` | другое занятие |
-| `Tab` / `Shift+Tab` | перейти между элементами |
-| `Space` | нажать выбранную кнопку |
+| `Enter` | start an activity or get the next one |
+| `D` | mark as done |
+| `S` / `Escape` | skip; `Escape` also closes settings |
+| `N` | another activity |
+| `Tab` / `Shift+Tab` | move between controls |
+| `Space` | activate the focused button |
 
-горячие клавиши не срабатывают в полях, редактируемом тексте, ссылках и раскрывающихся заголовках. сочетания с ctrl/cmd/alt, удержание клавиши и композиция ввода не меняют занятие. фокус виден, статусы объявляются через `aria-live`, системные контрастные цвета поддерживаются.
+shortcuts do not run in inputs, editable text, links or disclosure summaries. ctrl/cmd/alt combinations, held keys and text composition do not change the activity. focus is visible, statuses use `aria-live`, and system contrast colors are supported.
 
-## свои задачи и импорт
+## custom tasks and imports
 
-раздел «мои задачи» принимает название до 80 символов, инструкцию до 240 и время от 10 до 120 секунд. лимит: 200 своих задач и файл до 1 мб. повреждённые строки и дубликаты пропускаются; целочисленное время вне диапазона приводится к его границам.
+“my tasks” accepts a title up to 80 characters, instructions up to 240 and a duration from 10 to 120 seconds. limits: 200 custom tasks and a file up to 1 mb. invalid rows and duplicates are skipped; integer durations outside the range are clamped.
 
-json принимает массив или объект с полем `tasks`:
+json accepts an array or an object with `tasks`:
 
 ```json
 {
   "tasks": [
     {
       "id": "custom-window-01",
-      "category": "наблюдение",
-      "title": "пять круглых предметов",
-      "prompt": "найдите глазами пять круглых предметов вокруг себя.",
+      "category": "observation",
+      "title": "five round objects",
+      "prompt": "find five round objects around you.",
       "durationSec": 30
     }
   ]
 }
 ```
 
-csv использует заголовки `id,category,title,prompt,durationSec`. значения с запятой или переносом строки заключайте в двойные кавычки. избранное и статистика в экспорт не входят.
+csv uses `id,category,title,prompt,durationSec` headers. wrap values containing commas or newlines in double quotes. favorites and statistics are not exported. technical keys and imported text are retained in either language.
 
-## разработка
+## development
 
-статический html, css и javascript. сборка и зависимости для работы приложения не нужны.
+static html, css and javascript. no build or runtime dependencies.
 
 ```bash
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-откройте [локальный сайт](http://127.0.0.1:8000). публикация на github pages описана в [отдельной инструкции](docs/github-pages.md).
+open the [local site](http://127.0.0.1:8000). [github pages setup](docs/github-pages.md) is documented separately.
 
-источники интерфейса находятся в `index.html`, `styles.css`, `app.js` и `core.js`. источник встроенных занятий: `tasks.json`. папка `extension/` содержит готовое расширение, а `assets/fonts/` содержит локальные literata и ibm plex mono с лицензиями.
+the interface lives in `index.html`, `styles.css`, `app.js`, `core.js` and `i18n.js`. `tasks.json` is the canonical built-in task library. `extension/` contains the ready to load extension. local literata and ibm plex mono fonts and their licenses are in `assets/fonts/`.
 
-после изменения задач или интерфейса синхронизируйте копии и запустите проверки:
+after changing tasks or interface code, synchronize the copies and check them:
 
 ```bash
 node scripts/sync-tasks.js
 node scripts/sync-ui.js
-node --test tests/*.test.js
+node --test tests/*.test.*
 node --check app.js
 node --check extension/popup.js
 ```
 
-для браузерных проверок и обновления скриншотов нужен playwright:
+browser checks and screenshot capture need playwright:
 
 ```bash
 BORING_BUTTON_URL=http://127.0.0.1:8000 node scripts/verify-workspace.cjs
 BORING_BUTTON_URL=http://127.0.0.1:8000 node scripts/verify-browser.cjs
 BORING_BUTTON_URL=http://127.0.0.1:8000 node scripts/verify-selection.cjs
 BORING_BUTTON_URL=http://127.0.0.1:8000 node scripts/verify-motion.cjs
+BORING_BUTTON_URL=http://127.0.0.1:8000 node tests/i18n-browser.cjs
 BORING_BUTTON_URL=http://127.0.0.1:8000 node scripts/capture-screenshots.cjs
 ```
 
-проверки проходят фильтры, полный круг выбора, скрытие и возврат, избранное, таймер и восстановление, завершение, клавиатуру, свои задачи, импорт/экспорт, две вкладки и семь ширин от 320 до 1440 пикселей. проверка движения дополнительно проходит уменьшение анимаций, сенсорное управление, 200 своих задач, офлайн и `file://`.
+checks cover filters, complete selection rounds, hiding and restoring, favorites, timer recovery, completion, keyboard, custom tasks, imports/exports, two tabs, both languages and mobile widths. the motion check also covers reduced motion, touch, 200 custom tasks, offline use and `file://`.
 
-установку расширения и восстановление после закрытия popup проверьте отдельно через `chrome://extensions`. источники идей и лицензии собраны в [исследовании аналогов](docs/analogues.md).
+check extension installation and recovery after closing the popup separately through `chrome://extensions`. inspirations and licenses are in the [research notes](docs/analogues.md).

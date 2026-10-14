@@ -6,7 +6,7 @@ const key = 'boring-button-state-v2';
   const browser = await chromium.launch({ headless: true });
   try {
     for (const [pathname, width, height] of [['',390,844],['',768,1024],['',1440,1000],['/extension/popup.html',360,600]]) {
-      const page = await browser.newPage({ viewport: { width, height }, reducedMotion: 'reduce' });
+      const page = await browser.newPage({ locale: 'ru-RU', viewport: { width, height }, reducedMotion: 'reduce' });
       await page.goto(base + pathname);
       await page.evaluate(() => document.fonts.ready);
       assert.equal(await page.getByText('меньше скролла.', { exact: false }).count(), 0, 'the slogan must not occupy the workspace');
@@ -39,7 +39,7 @@ const key = 'boring-button-state-v2';
       await page.close();
     }
     // Another tab saving the same session must not close a user's open choice or steal focus.
-    const context = await browser.newContext({ reducedMotion: 'reduce' });
+    const context = await browser.newContext({ locale: 'ru-RU', reducedMotion: 'reduce' });
     const firstPage = await context.newPage();
     const otherPage = await context.newPage();
     await firstPage.goto(base);

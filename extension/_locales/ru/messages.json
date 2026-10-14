@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "boring button: маленькая пауза"
+  },
+  "extensionDescription": {
+    "message": "короткие занятия вместо скролла: выбор настроения и времени, таймер, избранное и свои задачи. работает офлайн."
+  },
+  "actionTitle": {
+    "message": "boring button: отвлечься на минуту"
+  }
+}

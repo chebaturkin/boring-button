@@ -8,7 +8,7 @@ const storageKey = 'boring-button-state-v2';
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
-    const context = await browser.newContext({ reducedMotion: 'reduce' });
+    const context = await browser.newContext({ locale: 'ru-RU', reducedMotion: 'reduce' });
     const page = await context.newPage();
     page.setDefaultNavigationTimeout(90_000);
     const errors = [];

@@ -1,11 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "boring button: маленькая пауза",
+  "name": "__MSG_extensionName__",
   "version": "2.0.0",
-  "description": "короткие занятия вместо скролла: выбор настроения и времени, таймер, избранное и свои задачи. работает офлайн.",
-  "icons": { "16": "assets/icon-16.png", "32": "assets/icon-32.png", "48": "assets/icon-48.png", "128": "assets/icon-128.png" },
+  "description": "__MSG_extensionDescription__",
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
   "action": {
-    "default_title": "boring button: отвлечься на минуту",
+    "default_title": "__MSG_actionTitle__",
     "default_popup": "popup.html"
-  }
+  },
+  "default_locale": "en"
 }

@@ -1,47 +1,45 @@
-# boring button: расширение
+# boring button: extension
 
-короткое занятие для перерыва за компьютером. выберите настроение и время, нажмите синюю кнопку, отвлекитесь на время от 10 до 120 секунд и возвращайтесь к своему дню.
+english · [русский](README.ru.md)
 
-<img src="../docs/screenshots/popup.png" width="360" alt="popup boring button">
+a short activity for a break at your computer. choose a mood and duration, press the blue button and take 10 to 120 seconds away from the feed.
 
-## установка в chrome или edge
+<img src="../docs/screenshots/en/popup.png" width="360" alt="boring button extension popup">
 
-1. скачайте и распакуйте репозиторий;
-2. откройте `chrome://extensions` или `edge://extensions`;
-3. включите **Developer mode**;
-4. нажмите **Load unpacked** и выберите эту папку `extension/`;
-5. закрепите boring button на панели браузера.
+## install in chrome or edge
 
-расширение пока не опубликовано в каталоге браузера. версия manifest v3 рассчитана на chrome и edge; совместимость с firefox отдельно не проверена.
+1. download and unpack the repository.
+2. open `chrome://extensions` or `edge://extensions`.
+3. enable **Developer mode**.
+4. choose **Load unpacked** and select this `extension/` directory.
+5. pin boring button in the toolbar.
 
-## что внутри
+the extension is not published in a browser store. this manifest v3 version targets chrome and edge; firefox compatibility has not been checked separately.
 
-60 встроенных занятий, выбор по настроению и времени, избранное, таймер с паузой и собственные задачи с импортом/экспортом. запущенный таймер продолжает идти после закрытия popup; при следующем открытии занятие восстанавливается. если таймер был на паузе, он остаётся на паузе.
+## activities and data
 
-♡ сохраняет занятие. в разделе «сохранённые занятия» можно начать конкретное; фильтр «из сохранённых» выбирает случайное с учётом заданного времени. смена фильтров не прерывает текущее занятие.
+60 built-in activities, mood and duration filters, favorites, a timer with pause, custom tasks and local import/export. a running timer continues after closing the popup; a paused one stays paused. a collection shows all its activities before repeating. changing filters starts a new round without interrupting the current timer.
 
-случайный выбор показывает весь выбранный набор перед повтором. история сохраняется между открытиями; смена настроения или времени начинает новый круг. неподходящую карточку можно убрать кнопкой **«больше не предлагать»** и вернуть через **«мой набор → скрытые занятия»**. скрытие сохраняет отметку избранного и не меняет счётчики.
+use ♡ to save an activity. hide one with “stop suggesting this” and restore it under “my collection → hidden activities”. hiding retains its favorite mark and does not change counters.
 
-## разрешения и данные
+the small **ru / en** control changes the interface and built-in activities without clearing your timer or custom tasks. chrome's extension name and description also have english and russian locale files.
 
-в manifest нет `permissions`, `host_permissions` и content scripts. popup загружает только файлы расширения, не читает вкладки, историю и содержимое страниц, не делает сетевых запросов.
+the manifest has no `permissions`, `host_permissions` or content scripts. the popup loads only extension files, reads no tabs, history or page contents, and makes no network requests. tasks, favorites, hidden activities, selection history, settings, counters and the current session are saved in extension `localStorage`. the site and popup have separate stores. file contents stay in your browser.
 
-свои задачи, избранное, скрытые занятия, история выбора, настройки, счётчики и активное занятие хранятся в `localStorage` расширения. сайт и popup используют отдельные хранилища. импорт и экспорт происходят в браузере, файлы никуда не отправляются.
+json accepts an array or a `tasks` container. csv headers are `id,category,title,prompt,durationSec`. title and prompt are required. limits: 1 mb per file and 200 custom tasks. see [formats and examples](../README.md#custom-tasks-and-imports).
 
-json принимает массив или контейнер с полем `tasks`; csv использует заголовки `id,category,title,prompt,durationSec`. название и инструкция обязательны. лимит: файл до 1 мб и 200 собственных задач. примеры формата есть в [основном readme](../README.md#свои-задачи-и-импорт).
+## keyboard
 
-## клавиатура
+`Enter`: start or choose another activity; `D`: done; `S`/`Escape`: skip; `N`: another. shortcuts are inactive in fields and links. timer, favorites, settings and language controls are keyboard accessible.
 
-`Enter`: начать или взять следующее занятие; `D`: сделано; `S`/`Escape`: пропустить; `N`: другое. в полях и ссылках горячие клавиши отключены. таймер, избранное и настройки доступны с клавиатуры.
+## development
 
-## разработка
-
-не редактируйте `core.js`, `popup.js`, `styles.css`, `popup.html` и встроенные задачи в этой папке вручную. источники лежат в корне проекта:
+shared files in this directory are generated from the repository root. after changing the source, run:
 
 ```bash
 node scripts/sync-tasks.js
 node scripts/sync-ui.js
-node --test tests/*.test.js
+node --test tests/*.test.*
 ```
 
-после изменений нажмите **Reload** на карточке расширения. проверьте старт, паузу, закрытие и повторное открытие popup, завершение, избранное, пустой набор, импорт и отсутствие горизонтального скролла.
+press **Reload** on the extension card. check start, pause, closing and reopening the popup, completion, favorites, empty collections, imports, both languages and horizontal overflow.

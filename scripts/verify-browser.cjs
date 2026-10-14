@@ -8,7 +8,7 @@ const storageKey = 'boring-button-state-v2';
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
-    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    const page = await browser.newPage({ locale: 'ru-RU', viewport: { width: 1440, height: 1000 } });
     const errors = [];
     const external = [];
     page.on('pageerror', error => errors.push(error.message));

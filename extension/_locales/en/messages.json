@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "boring button: a small pause"
+  },
+  "extensionDescription": {
+    "message": "short activities instead of scrolling: choose a mood and duration, use a timer, favorites and custom tasks. works offline."
+  },
+  "actionTitle": {
+    "message": "boring button: take a minute"
+  }
+}

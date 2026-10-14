@@ -8,7 +8,7 @@ const storageKey = 'boring-button-state-v2';
 (async () => {
   const browser = await chromium.launch({ headless: true, channel: process.env.BORING_BUTTON_BROWSER_CHANNEL });
   try {
-    const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    const page = await browser.newPage({ locale: 'ru-RU', viewport: { width: 1440, height: 1000 } });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(base);
@@ -108,7 +108,7 @@ const storageKey = 'boring-button-state-v2';
     assert.equal(await page.locator('.settings-link').evaluate(el => el === document.activeElement), true);
 
     // Touch has no decorative hover, and all controls still work.
-    const touch = await browser.newContext({ viewport: { width: 360, height: 800 }, isMobile: true, hasTouch: true });
+    const touch = await browser.newContext({ locale: 'ru-RU', viewport: { width: 360, height: 800 }, isMobile: true, hasTouch: true });
     const mobile = await touch.newPage();
     await mobile.goto(base);
     await mobile.locator('#start-button').tap();
@@ -120,7 +120,7 @@ const storageKey = 'boring-button-state-v2';
     await touch.close();
 
     // A full imported library must preserve focus, scroll and the complete export.
-    const bulk = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    const bulk = await browser.newPage({ locale: 'ru-RU', viewport: { width: 1440, height: 1000 } });
     bulk.on('pageerror', error => errors.push(error.message));
     await bulk.goto(base);
     await bulk.locator('.settings-link').click();
@@ -174,7 +174,7 @@ const storageKey = 'boring-button-state-v2';
     await bulk.close();
 
     // Programmatic animations are progressive enhancement, including file://.
-    const offline = await browser.newPage({ viewport: { width: 360, height: 800 } });
+    const offline = await browser.newPage({ locale: 'ru-RU', viewport: { width: 360, height: 800 } });
     await offline.addInitScript(() => { Element.prototype.animate = undefined; });
     await offline.goto(require('node:url').pathToFileURL(require('node:path').resolve(__dirname, '../index.html')).href);
     await offline.locator('#start-button').click();

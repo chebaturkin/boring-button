@@ -1,5 +1,7 @@
 (() => {
   "use strict";
+  const t = (...args) => globalThis.I18n.t(...args);
+  I18n.apply();
 
   const Core = window.BoringButtonCore;
   if (!Core) return;
@@ -8,10 +10,9 @@
   const LEGACY_STORAGE_KEY = "boring-button-state-v1";
   const MAX_IMPORT_BYTES = 1_000_000;
   const MAX_CUSTOM_TASKS = 200;
-  const CATEGORY_LABELS = {
-    movement: "движение", attention: "внимание", order: "порядок", observation: "наблюдение", game: "мини-игра", custom: "своё",
-    "движение": "движение", "внимание": "внимание", "порядок": "порядок", "наблюдение": "наблюдение", "мини-игра": "мини-игра", "своё": "своё",
-  };
+  const CATEGORY_KEYS = { movement: 's65', attention: 's66', order: 's67', observation: 's68', game: 's69', custom: 's64', 'движение': 's65', 'внимание': 's66', 'порядок': 's67', 'наблюдение': 's68', 'мини-игра': 's69', 'своё': 's64' };
+  const CATEGORY_VALUES = { movement: 'движение', attention: 'внимание', order: 'порядок', observation: 'наблюдение', game: 'мини-игра', custom: 'своё' };
+  function taskCopy(task, field) { const key = `task.${task.id}.${field}`; return I18n.messages.ru[key] ? t(key) : task[field]; }
   const FALLBACK_TASKS = [
     { id: "fallback-1", category: "movement", title: "поменяйте опору", prompt: "встаньте и медленно перенесите вес с одной ноги на другую десять раз.", durationSec: 30 },
     { id: "fallback-2", category: "attention", title: "найдите четыре угла", prompt: "посмотрите вокруг и найдите взглядом четыре прямых угла. назовите их про себя.", durationSec: 30 },
@@ -120,7 +121,7 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     } catch {
       saved = false;
-      setMessage("не удалось сохранить изменения на этом устройстве.", true);
+      setMessage(t("s84"), true);
     }
     updateStats();
     return saved;
@@ -141,11 +142,11 @@
     }, Core.msUntilNextLocalDay() + 50);
   }
 
-  function categoryLabel(category) { return CATEGORY_LABELS[category] || String(category || "своё").toLowerCase(); }
+  function categoryLabel(category) { return CATEGORY_KEYS[category] ? t(CATEGORY_KEYS[category]) : String(category || t("s64")); }
   function formatDuration(seconds) {
     const value = Number(seconds);
-    if (value < 60) return `${value} с`;
-    return value % 60 === 0 ? `${value / 60} мин` : `${value} с`;
+    if (value < 60) return t("s85", value);
+    return value % 60 === 0 ? t("s86", value / 60) : t("s85", value);
   }
   function formatTime(seconds) {
     const safe = Math.max(0, Math.floor(Number(seconds) || 0));
@@ -168,7 +169,7 @@
   function availableTasks() { return Core.filterTasks(allTasks(), state.preferences, state.favoriteIds, state.hiddenTaskIds); }
   function updateSelection() {
     els.modeSelect.value = state.preferences.mode;
-    els.nextChoice.textContent = `для следующего занятия: ${els.modeSelect.selectedOptions[0].textContent} · до ${formatDuration(state.preferences.maxDuration)}`;
+    els.nextChoice.textContent = t("s87", els.modeSelect.selectedOptions[0].textContent, formatDuration(state.preferences.maxDuration));
     document.querySelectorAll("[data-duration]").forEach((button) => {
       button.setAttribute("aria-pressed", String(Number(button.dataset.duration) === state.preferences.maxDuration));
     });
@@ -181,17 +182,17 @@
     $("completion-another").disabled = !pool.length;
     els.poolNote.classList.toggle("is-empty", !pool.length);
     els.poolNote.textContent = pool.length
-      ? `занятий в этом наборе: ${pool.length} · ${pool.length === 1 ? "пока одно. можно добавить своё" : "без повторов до конца набора"}`
+      ? t("s90", pool.length, pool.length === 1 ? t("s88") : t("s89"))
       : hasHiddenMatches
-        ? "подходящие занятия скрыты. верните одно из списка ниже."
+        ? t("s91")
       : state.preferences.mode === "favorites" && !state.favoriteIds.length
-        ? "сохраните занятие через ♡ или выберите «как угодно»."
-        : "здесь пока пусто. добавьте времени или выберите другое занятие.";
+        ? t("s92")
+        : t("s93");
     if (!currentTask) {
       const seconds = state.preferences.maxDuration;
       els.timer.textContent = formatTime(seconds);
-      els.timer.setAttribute("aria-label", `до ${formatDuration(seconds)}`);
-      els.timerCaption.textContent = `до ${formatDuration(seconds)}`;
+      els.timer.setAttribute("aria-label", t("s94", formatDuration(seconds)));
+      els.timerCaption.textContent = t("s94", formatDuration(seconds));
     }
     updateFavoriteButton();
     renderFavorites();
@@ -199,7 +200,7 @@
   function updateFavoriteButton() {
     const saved = Boolean(currentTask && state.favoriteIds.includes(currentTask.id));
     els.favorite.setAttribute("aria-pressed", String(saved));
-    els.favorite.setAttribute("aria-label", saved ? "убрать из избранного" : "сохранить в избранное");
+    els.favorite.setAttribute("aria-label", saved ? t("s95") : t("s26"));
     els.favoriteSymbol.textContent = saved ? "♥" : "♡";
   }
   function toggleFavorite(task) {
@@ -207,7 +208,7 @@
     const saved = state.favoriteIds.includes(task.id);
     state.favoriteIds = saved ? state.favoriteIds.filter((id) => id !== task.id) : [...state.favoriteIds, task.id];
     writeState();
-    announce(saved ? "занятие убрано из избранного." : "занятие сохранено в избранное.");
+    announce(saved ? t("s96") : t("s97"));
     if (currentTask?.id === task.id) feedback(els.favoriteSymbol, [
       { transform: "scale(1) rotate(0)" },
       { transform: `scale(${saved ? .8 : 1.22}) rotate(-12deg)`, offset: .45 },
@@ -219,7 +220,7 @@
     els.favoriteCount.textContent = String(favorites.length);
     els.favoritesEmpty.hidden = favorites.length > 0;
     $("favorites-note").hidden = favorites.length === 0;
-    const key = JSON.stringify(favorites);
+    const key = I18n.locale + JSON.stringify(favorites);
     if (key === favoriteListKey) return;
     favoriteListKey = key;
     els.favoriteList.replaceChildren();
@@ -229,15 +230,15 @@
       const copy = document.createElement("div");
       copy.className = "custom-task-copy";
       const title = document.createElement("strong");
-      title.textContent = task.title;
+      title.textContent = taskCopy(task, "title");
       const meta = document.createElement("span");
       meta.textContent = `${categoryLabel(task.category)} · ${formatDuration(task.durationSec)}`;
       copy.append(title, meta);
       const start = document.createElement("button");
       start.type = "button";
       start.className = "action-button";
-      start.textContent = "начать";
-      start.setAttribute("aria-label", `начать занятие «${task.title}»`);
+      start.textContent = t("s98");
+      start.setAttribute("aria-label", t("s99", taskCopy(task, "title")));
       start.addEventListener("click", () => {
         showTask(task);
       });
@@ -248,7 +249,7 @@
       symbol.textContent = "×";
       symbol.setAttribute("aria-hidden", "true");
       remove.append(symbol);
-      remove.setAttribute("aria-label", `убрать «${task.title}» из избранного`);
+      remove.setAttribute("aria-label", t("s100", taskCopy(task, "title")));
       remove.addEventListener("click", () => {
         toggleFavorite(task);
         $("favorites-library").querySelector("summary").focus();
@@ -259,8 +260,8 @@
   }
   function updateStats() {
     els.timerUnit.dataset.state = state.session?.status || "idle";
-    els.today.textContent = String(state.todayCompleted);
-    els.completed.textContent = String(state.completed);
+    els.today.textContent = new Intl.NumberFormat(I18n.intlLocale).format(state.todayCompleted);
+    els.completed.textContent = new Intl.NumberFormat(I18n.intlLocale).format(state.completed);
     els.taskCount.textContent = String(baseTasks.length + state.customTasks.length);
     els.customCount.textContent = String(state.customTasks.length);
     renderCustomTasks();
@@ -271,7 +272,7 @@
     const hidden = allTasks().filter((task) => state.hiddenTaskIds.includes(task.id));
     els.hiddenCount.textContent = String(hidden.length);
     els.hiddenEmpty.hidden = hidden.length > 0;
-    const key = JSON.stringify(hidden);
+    const key = I18n.locale + JSON.stringify(hidden);
     if (key === hiddenListKey) return;
     hiddenListKey = key;
     els.hiddenList.replaceChildren();
@@ -281,20 +282,20 @@
       const copy = document.createElement("div");
       copy.className = "custom-task-copy";
       const title = document.createElement("strong");
-      title.textContent = task.title;
+      title.textContent = taskCopy(task, "title");
       const meta = document.createElement("span");
       meta.textContent = `${categoryLabel(task.category)} · ${formatDuration(task.durationSec)}`;
       copy.append(title, meta);
       const restore = document.createElement("button");
       restore.type = "button";
       restore.className = "action-button";
-      restore.textContent = "вернуть";
-      restore.setAttribute("aria-label", `вернуть занятие «${task.title}» в набор`);
+      restore.textContent = t("s101");
+      restore.setAttribute("aria-label", t("s102", taskCopy(task, "title")));
       restore.addEventListener("click", () => {
         state.hiddenTaskIds = state.hiddenTaskIds.filter((id) => id !== task.id);
         const saved = writeState();
-        if (saved) setMessage("занятие снова в наборе.");
-        announce("занятие снова в наборе.");
+        if (saved) setMessage(t("s103"));
+        announce(t("s103"));
         els.hiddenLibrary.querySelector("summary").focus();
       });
       item.append(copy, restore);
@@ -303,7 +304,7 @@
   }
   function renderCustomTasks() {
     if (!els.customList) return;
-    const key = JSON.stringify(state.customTasks);
+    const key = I18n.locale + JSON.stringify(state.customTasks);
     if (key === customListKey) return;
     customListKey = key;
     els.customList.replaceChildren();
@@ -315,7 +316,7 @@
       const copy = document.createElement("div");
       copy.className = "custom-task-copy";
       const title = document.createElement("strong");
-      title.textContent = task.title;
+      title.textContent = taskCopy(task, "title");
       const prompt = document.createElement("span");
       prompt.textContent = `${task.prompt} · ${formatDuration(task.durationSec)}`;
       copy.append(title, prompt);
@@ -324,14 +325,14 @@
       const edit = document.createElement("button");
       edit.type = "button";
       edit.className = "custom-task-edit";
-      edit.textContent = "изменить";
-      edit.setAttribute("aria-label", `изменить задачу «${task.title}»`);
+      edit.textContent = t("s104");
+      edit.setAttribute("aria-label", t("s105", task.title));
       edit.addEventListener("click", () => beginEdit(task));
       const remove = document.createElement("button");
       remove.type = "button";
       remove.className = "custom-task-remove";
-      remove.textContent = "удалить";
-      remove.setAttribute("aria-label", `удалить задачу «${task.title}»`);
+      remove.textContent = t("s106");
+      remove.setAttribute("aria-label", t("s107", task.title));
       remove.addEventListener("click", () => {
         const wasCurrent = currentTask?.id === task.id;
         state.customTasks = state.customTasks.filter((entry) => entry.id !== task.id);
@@ -341,8 +342,8 @@
         if (editingTaskId === task.id) resetForm();
         if (wasCurrent) resetTaskView(false);
         writeState();
-        setMessage("задача удалена из вашего набора.");
-        announce("своя задача удалена.");
+        setMessage(t("s108"));
+        announce(t("s109"));
         const nextRemove = els.customList.querySelector(".custom-task-remove");
         if (nextRemove) nextRemove.focus();
         else els.settings.querySelector("summary")?.focus();
@@ -357,7 +358,7 @@
     editingTaskId = null;
     els.form.elements.duration.querySelectorAll("[data-edit-option]").forEach((option) => option.remove());
     els.form.reset();
-    els.submit.textContent = "добавить задачу";
+    els.submit.textContent = t("s70");
     els.cancelEdit.hidden = true;
   }
   function beginEdit(task) {
@@ -374,9 +375,9 @@
       durationSelect.append(option);
     }
     durationSelect.value = durationValue;
-    const categoryValue = CATEGORY_LABELS[task.category] || task.category;
+    const categoryValue = CATEGORY_VALUES[task.category] || task.category;
     els.form.elements.category.value = [...els.form.elements.category.options].some((option) => option.value === categoryValue) ? categoryValue : "своё";
-    els.submit.textContent = "сохранить изменения";
+    els.submit.textContent = t("s110");
     els.cancelEdit.hidden = false;
     els.form.elements.title.focus();
   }
@@ -388,7 +389,7 @@
     els.progress.style.strokeDashoffset = String(Math.min(100, Math.max(0, 100 - ((safe / duration) * 100))));
     if (lastRemaining !== Math.ceil(safe)) {
       lastRemaining = Math.ceil(safe);
-      els.timer.setAttribute("aria-label", `${formatTime(safe)} осталось`);
+      els.timer.setAttribute("aria-label", t("s111", formatTime(safe)));
     }
   }
   function stopTimerLoop() {
@@ -403,13 +404,13 @@
     stopTimerLoop();
     els.timerToggle.hidden = true;
     els.timerToggle.setAttribute("aria-pressed", "false");
-    els.timerCaption.textContent = "время вышло";
-    els.timerNote.textContent = "пауза подошла к концу. отметьте, что получилось.";
+    els.timerCaption.textContent = t("s112");
+    els.timerNote.textContent = t("s113");
     els.timer.classList.add("timer-ended");
     updateTimerDisplay(0);
     if (!wasExpired) {
       writeState();
-      announce("время вышло. можно отметить задачу или взять ещё одну.");
+      announce(t("s114"));
     }
   }
   function tickTimer() {
@@ -453,17 +454,17 @@
     els.actions.hidden = false;
     els.timerControls.hidden = false;
     els.timerToggle.hidden = false;
-    els.timerToggle.textContent = "пауза";
+    els.timerToggle.textContent = t("s36");
     els.timerToggle.setAttribute("aria-pressed", "false");
     els.context.textContent = `${categoryLabel(task.category)} · ${formatDuration(task.durationSec)}`;
-    els.title.textContent = task.title;
-    els.prompt.textContent = task.prompt;
+    els.title.textContent = taskCopy(task, "title");
+    els.prompt.textContent = taskCopy(task, "prompt");
     els.timer.classList.remove("timer-ended");
     updateFavoriteButton();
   }
   function showTask(task) {
     if (!task) {
-      setMessage("задач пока нет. добавьте свою в разделе ниже.", true);
+      setMessage(t("s115"), true);
       return;
     }
     state.session = newSession(task);
@@ -472,13 +473,13 @@
     state.recentIds = [...state.recentIds.filter((id) => id !== task.id), task.id].slice(-8);
     renderActiveTask(task, true);
     deliverCard();
-    els.timerCaption.textContent = "осталось";
-    els.timerNote.textContent = "можно остановиться раньше.";
+    els.timerCaption.textContent = t("s116");
+    els.timerNote.textContent = t("s117");
     els.timer.classList.remove("timer-ended");
     writeState();
     startTimerLoop();
     focusVisible(els.title);
-    announce(`${categoryLabel(task.category)}. ${task.title}. ${task.prompt}`);
+    announce(`${categoryLabel(task.category)}. ${taskCopy(task, "title")}. ${taskCopy(task, "prompt")}`);
   }
   function restoreSession() {
     const session = state.session;
@@ -487,9 +488,9 @@
     stopTimerLoop();
     renderActiveTask(session.task);
     if (session.status === "paused") {
-      els.timerCaption.textContent = "пауза";
-      els.timerNote.textContent = "продолжите, когда будете готовы.";
-      els.timerToggle.textContent = "продолжить";
+      els.timerCaption.textContent = t("s36");
+      els.timerNote.textContent = t("s118");
+      els.timerToggle.textContent = t("s119");
       els.timerToggle.setAttribute("aria-pressed", "true");
       updateTimerDisplay(Core.remainingFromSession(session, Date.now()));
       return;
@@ -498,8 +499,8 @@
       expireSession();
       return;
     }
-    els.timerCaption.textContent = "осталось";
-    els.timerNote.textContent = "можно остановиться раньше.";
+    els.timerCaption.textContent = t("s116");
+    els.timerNote.textContent = t("s117");
     startTimerLoop();
   }
   function resetTaskView(focusStart = true) {
@@ -518,11 +519,11 @@
     els.actions.hidden = true;
     els.timerControls.hidden = true;
     els.timerToggle.hidden = false;
-    els.timerToggle.textContent = "пауза";
+    els.timerToggle.textContent = t("s36");
     els.timerToggle.setAttribute("aria-pressed", "false");
     els.timer.textContent = formatTime(state.preferences.maxDuration);
-    els.timerCaption.textContent = `до ${formatDuration(state.preferences.maxDuration)}`;
-    els.timerNote.textContent = "короткая пауза. и дальше по своим делам.";
+    els.timerCaption.textContent = t("s94", formatDuration(state.preferences.maxDuration));
+    els.timerNote.textContent = t("s120");
     els.progress.style.strokeDashoffset = "100";
     els.timer.classList.remove("timer-ended");
     lastRemaining = null;
@@ -544,8 +545,8 @@
     resetTaskView(false);
     const saved = writeState();
     els.taskFeedback.textContent = saved
-      ? "занятие скрыто. вернуть его можно в «моих задачах»."
-      : "занятие скрыто до закрытия страницы. сохранить выбор не удалось.";
+      ? t("s121")
+      : t("s122");
     els.taskFeedback.hidden = false;
     if (!els.start.disabled) els.start.focus({ preventScroll: true });
     else if (!els.poolRecovery.hidden) els.poolRecovery.focus({ preventScroll: true });
@@ -556,10 +557,10 @@
     if (kind === "done") {
       state.completed += 1;
       state.todayCompleted += 1;
-      announce("маленькое дело сделано. можно возвращаться к своему дню.");
+      announce(t("s123"));
     } else {
       state.skipped += 1;
-      announce("задача пропущена.");
+      announce(t("s124"));
     }
     resetTaskView(false);
     writeState();
@@ -581,47 +582,47 @@
       state.session.pausedForMs += Math.max(0, now - state.session.pausedAt);
       state.session.pausedAt = null;
       state.session.status = "running";
-      els.timerToggle.textContent = "пауза";
+      els.timerToggle.textContent = t("s36");
       els.timerToggle.setAttribute("aria-pressed", "false");
-      els.timerCaption.textContent = "осталось";
-      els.timerNote.textContent = "можно остановиться раньше.";
+      els.timerCaption.textContent = t("s116");
+      els.timerNote.textContent = t("s117");
       writeState();
       startTimerLoop();
-      announce("таймер продолжается.");
+      announce(t("s125"));
       return;
     }
     state.session.pausedAt = Date.now();
     state.session.status = "paused";
     stopTimerLoop();
-    els.timerToggle.textContent = "продолжить";
+    els.timerToggle.textContent = t("s119");
     els.timerToggle.setAttribute("aria-pressed", "true");
-    els.timerCaption.textContent = "пауза";
-    els.timerNote.textContent = "продолжите, когда будете готовы.";
+    els.timerCaption.textContent = t("s36");
+    els.timerNote.textContent = t("s118");
     writeState();
     tickTimer();
-    announce("таймер на паузе.");
+    announce(t("s126"));
   }
   function restartTimer() {
     if (!currentTask) return;
     state.session = newSession(currentTask);
     els.timerToggle.hidden = false;
-    els.timerToggle.textContent = "пауза";
+    els.timerToggle.textContent = t("s36");
     els.timerToggle.setAttribute("aria-pressed", "false");
-    els.timerCaption.textContent = "осталось";
-    els.timerNote.textContent = "можно остановиться раньше.";
+    els.timerCaption.textContent = t("s116");
+    els.timerNote.textContent = t("s117");
     els.timer.classList.remove("timer-ended");
     writeState();
     startTimerLoop();
-    announce("таймер начат заново.");
+    announce(t("s127"));
     feedback(els.dial, [{ transform: "rotate(-24deg)" }, { transform: "rotate(0)" }]);
   }
   function parseImportedFile(file, text) {
     const name = file.name.toLowerCase();
     if (name.endsWith(".csv")) return Core.parseCsv(text);
     if (name.endsWith(".json")) {
-      try { return JSON.parse(text); } catch { throw new Error("не удалось разобрать json. проверьте файл и попробуйте ещё раз."); }
+      try { return JSON.parse(text); } catch { throw new Error(t("s128")); }
     }
-    throw new Error("выберите файл json или csv.");
+    throw new Error(t("s129"));
   }
 
   els.start.addEventListener("click", nextTask);
@@ -682,32 +683,32 @@
       const others = state.customTasks.filter((task) => task.id !== editingTaskId);
       const result = Core.mergeCustomTasks(others, [payload], baseTasks);
       if (!result.added.length) {
-        setMessage("проверьте поля: такая задача уже есть или данные не подходят.", true);
+        setMessage(t("s130"), true);
         return;
       }
       state.customTasks = state.customTasks.map((task) => task.id === editingTaskId ? result.added[0] : task);
       resetForm();
       const saved = writeState();
-      if (saved) setMessage("изменения сохранены.");
+      if (saved) setMessage(t("s131"));
       markCustomTask(payload.id);
-      announce("своя задача изменена.");
+      announce(t("s132"));
       return;
     }
     if (state.customTasks.length >= MAX_CUSTOM_TASKS) {
-      setMessage(`можно сохранить не больше ${MAX_CUSTOM_TASKS} своих задач.`, true);
+      setMessage(t("s133", MAX_CUSTOM_TASKS), true);
       return;
     }
     const result = Core.mergeCustomTasks(state.customTasks, [payload], baseTasks);
     if (!result.added.length) {
-      setMessage("проверьте поля: такая задача уже есть или данные не подходят.", true);
+      setMessage(t("s130"), true);
       return;
     }
     state.customTasks = result.tasks;
     resetForm();
     const saved = writeState();
-    if (saved) setMessage("задача добавлена в ваш набор.");
+    if (saved) setMessage(t("s134"));
     markCustomTask(result.added[0].id);
-    announce("своя задача добавлена.");
+    announce(t("s135"));
   });
   els.cancelEdit.addEventListener("click", () => {
     resetForm();
@@ -721,20 +722,20 @@
     els.importFile.disabled = true;
     els.importFile.closest("label").setAttribute("aria-disabled", "true");
     els.message.setAttribute("aria-busy", "true");
-    setMessage("читаю файл…");
+    setMessage(t("s136"));
     try {
-      if (file.size > MAX_IMPORT_BYTES) throw new Error("файл слишком большой. лимит: 1 мб.");
+      if (file.size > MAX_IMPORT_BYTES) throw new Error(t("s137"));
       const incoming = Core.normalizeTasks(parseImportedFile(file, await file.text()));
       const result = Core.mergeCustomTasks(state.customTasks, incoming, baseTasks);
-      if (!result.added.length) throw new Error("в файле не найдено новых корректных задач.");
-      if (state.customTasks.length + result.added.length > MAX_CUSTOM_TASKS) throw new Error(`можно сохранить не больше ${MAX_CUSTOM_TASKS} своих задач.`);
+      if (!result.added.length) throw new Error(t("s138"));
+      if (state.customTasks.length + result.added.length > MAX_CUSTOM_TASKS) throw new Error(t("s133", MAX_CUSTOM_TASKS));
       state.customTasks = result.tasks;
       const saved = writeState();
-      if (saved) setMessage(`добавлено задач: ${result.added.length}.`);
+      if (saved) setMessage(t("s139", result.added.length));
       markCustomTask(result.added[0].id);
-      announce("список импортирован.");
+      announce(t("s140"));
     } catch (error) {
-      setMessage(error.message || "не удалось прочитать файл.", true);
+      setMessage(error.message || t("s141"), true);
     } finally {
       els.importFile.value = "";
       els.importFile.disabled = false;
@@ -752,11 +753,11 @@
     link.download = "boring-button-tasks.json";
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setMessage("файл со своими задачами скачан.");
+    setMessage(t("s142"));
   });
   els.reset.addEventListener("click", () => {
-    if (!state.customTasks.length) { setMessage("своих задач пока нет."); return; }
-    if (!window.confirm("удалить все свои задачи?")) return;
+    if (!state.customTasks.length) { setMessage(t("s143")); return; }
+    if (!window.confirm(t("s144"))) return;
     state.favoriteIds = state.favoriteIds.filter((id) => !state.customTasks.some((task) => task.id === id));
     const customIds = new Set(state.customTasks.map((task) => task.id));
     state.hiddenTaskIds = state.hiddenTaskIds.filter((id) => !customIds.has(id));
@@ -764,18 +765,18 @@
     state.customTasks = [];
     if (currentTask && !baseTasks.some((task) => task.id === currentTask.id)) resetTaskView(false);
     writeState();
-    setMessage("свои задачи удалены.");
-    announce("свои задачи удалены.");
+    setMessage(t("s145"));
+    announce(t("s145"));
   });
   els.resetStats?.addEventListener("click", () => {
-    if (!state.completed && !state.skipped && !state.todayCompleted) { setMessage("статистика уже пустая."); return; }
-    if (!window.confirm("сбросить локальную статистику?")) return;
+    if (!state.completed && !state.skipped && !state.todayCompleted) { setMessage(t("s146")); return; }
+    if (!window.confirm(t("s147"))) return;
     state.completed = 0;
     state.skipped = 0;
     state.todayCompleted = 0;
     writeState();
-    setMessage("статистика сброшена.");
-    announce("статистика сброшена.");
+    setMessage(t("s148"));
+    announce(t("s148"));
   });
   window.addEventListener("storage", (event) => {
     if (event.key !== STORAGE_KEY) return;
@@ -828,6 +829,15 @@
     if (key === "n") nextTask();
   });
 
+  I18n.subscribe(() => {
+    const message = els.message.textContent, feedbackMessage = els.taskFeedback.textContent;
+    lastRemaining = null;
+    updateStats();
+    if (state.session) restoreSession();
+    els.submit.textContent = editingTaskId ? t('s110') : t('s70');
+    els.message.textContent = I18n.retext(message);
+    els.taskFeedback.textContent = I18n.retext(feedbackMessage);
+  });
   setScene("idle");
   refreshToday();
   if (migrationNeeded) writeState();

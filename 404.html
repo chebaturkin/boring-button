@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
+  <base href="/boring-button/">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f7f8fa">
-  <title>страница не найдена: boring button</title>
+  <title data-i18n="notFound.title">page not found: boring button</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; min-height: 100svh; display: grid; place-items: center; padding: 24px; background: #f7f8fa; color: #20242b; font: 16px/1.6 "Trebuchet MS", sans-serif; }
@@ -15,12 +16,14 @@
     a:hover { background: #1427a2; }
     a:focus-visible { outline: 3px solid #20231c; outline-offset: 5px; }
   </style>
+  <script src="i18n.js"></script>
 </head>
 <body>
   <main>
-    <h1>страница не найдена</h1>
-    <p>проверьте адрес или вернитесь к кнопке.</p>
-    <a href="https://chebaturkin.github.io/boring-button/">к кнопке</a>
+    <h1 data-i18n="notFound.heading">page not found</h1>
+    <p data-i18n="notFound.body">check the address or return to the button.</p>
+    <a href="https://chebaturkin.github.io/boring-button/" data-i18n="notFound.link">back to the button</a>
   </main>
+  <script src="not-found.js"></script>
 </body>
 </html>
