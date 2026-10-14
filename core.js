@@ -105,7 +105,7 @@
         value += char;
       }
     }
-    if (quoted) throw new Error("в csv осталась незакрытая кавычка. закрой её и попробуй ещё раз.");
+    if (quoted) throw new Error("в csv осталась незакрытая кавычка. закройте её и попробуйте ещё раз.");
     row.push(value.trim());
     if (row.some((cell) => cell !== "")) rows.push(row);
     return rows;

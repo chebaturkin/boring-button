@@ -8,7 +8,7 @@ for (const [source, destination] of [['core.js', 'core.js'], ['app.js', 'popup.j
 }
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8')
   .replace('<body>', '<body class="popup">')
-  .replace('href="." aria-label="boring button — на главную"', 'href="#main" aria-label="boring button — к началу"')
+  .replace('href="." aria-label="boring button, на главную"', 'href="#main" aria-label="boring button, к началу"')
   .replace('src="app.js"', 'src="popup.js"');
 fs.writeFileSync(path.join(root, 'extension', 'popup.html'), html);
 console.log('Synced website interface to extension popup.');

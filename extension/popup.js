@@ -13,11 +13,11 @@
     "движение": "движение", "внимание": "внимание", "порядок": "порядок", "наблюдение": "наблюдение", "мини-игра": "мини-игра", "своё": "своё",
   };
   const FALLBACK_TASKS = [
-    { id: "fallback-1", category: "movement", title: "поменяй опору", prompt: "встань и медленно перенеси вес с одной ноги на другую десять раз.", durationSec: 30 },
-    { id: "fallback-2", category: "attention", title: "найди четыре угла", prompt: "посмотри вокруг и найди взглядом четыре прямых угла. назови их про себя.", durationSec: 30 },
-    { id: "fallback-3", category: "order", title: "освободи один квадрат", prompt: "выбери участок поверхности размером с ладонь и убери с него всё лишнее.", durationSec: 60 },
-    { id: "fallback-4", category: "observation", title: "послушай дальний звук", prompt: "закрой глаза и найди самый тихий звук в комнате. послушай его до конца.", durationSec: 45 },
-    { id: "fallback-5", category: "game", title: "алфавит наоборот", prompt: "попробуй назвать буквы от Я до А. остановись, когда станет смешно.", durationSec: 60 },
+    { id: "fallback-1", category: "movement", title: "поменяйте опору", prompt: "встаньте и медленно перенесите вес с одной ноги на другую десять раз.", durationSec: 30 },
+    { id: "fallback-2", category: "attention", title: "найдите четыре угла", prompt: "посмотрите вокруг и найдите взглядом четыре прямых угла. назовите их про себя.", durationSec: 30 },
+    { id: "fallback-3", category: "order", title: "освободите один квадрат", prompt: "выберите участок поверхности размером с ладонь и уберите с него всё лишнее.", durationSec: 60 },
+    { id: "fallback-4", category: "observation", title: "послушайте дальний звук", prompt: "закройте глаза и найдите самый тихий звук в комнате. послушайте его до конца.", durationSec: 45 },
+    { id: "fallback-5", category: "game", title: "алфавит наоборот", prompt: "попробуйте назвать буквы от Я до А. остановитесь, когда станет смешно.", durationSec: 60 },
   ];
 
   const $ = (id) => document.getElementById(id);
@@ -181,12 +181,12 @@
     $("completion-another").disabled = !pool.length;
     els.poolNote.classList.toggle("is-empty", !pool.length);
     els.poolNote.textContent = pool.length
-      ? `занятий в этом наборе: ${pool.length} · ${pool.length === 1 ? "пока одно — можно добавить своё" : "без повторов до конца набора"}`
+      ? `занятий в этом наборе: ${pool.length} · ${pool.length === 1 ? "пока одно. можно добавить своё" : "без повторов до конца набора"}`
       : hasHiddenMatches
-        ? "подходящие занятия скрыты. верни одно из списка ниже."
+        ? "подходящие занятия скрыты. верните одно из списка ниже."
       : state.preferences.mode === "favorites" && !state.favoriteIds.length
-        ? "сохрани занятие через ♡ или выбери «как угодно»."
-        : "здесь пока пусто. добавь времени или выбери другое занятие.";
+        ? "сохраните занятие через ♡ или выберите «как угодно»."
+        : "здесь пока пусто. добавьте времени или выберите другое занятие.";
     if (!currentTask) {
       const seconds = state.preferences.maxDuration;
       els.timer.textContent = formatTime(seconds);
@@ -341,7 +341,7 @@
         if (editingTaskId === task.id) resetForm();
         if (wasCurrent) resetTaskView(false);
         writeState();
-        setMessage("задача удалена из твоего набора.");
+        setMessage("задача удалена из вашего набора.");
         announce("своя задача удалена.");
         const nextRemove = els.customList.querySelector(".custom-task-remove");
         if (nextRemove) nextRemove.focus();
@@ -404,7 +404,7 @@
     els.timerToggle.hidden = true;
     els.timerToggle.setAttribute("aria-pressed", "false");
     els.timerCaption.textContent = "время вышло";
-    els.timerNote.textContent = "пауза подошла к концу. отметь, что получилось.";
+    els.timerNote.textContent = "пауза подошла к концу. отметьте, что получилось.";
     els.timer.classList.add("timer-ended");
     updateTimerDisplay(0);
     if (!wasExpired) {
@@ -463,7 +463,7 @@
   }
   function showTask(task) {
     if (!task) {
-      setMessage("задач пока нет. добавь свою в разделе ниже.", true);
+      setMessage("задач пока нет. добавьте свою в разделе ниже.", true);
       return;
     }
     state.session = newSession(task);
@@ -488,7 +488,7 @@
     renderActiveTask(session.task);
     if (session.status === "paused") {
       els.timerCaption.textContent = "пауза";
-      els.timerNote.textContent = "продолжи, когда будешь готов.";
+      els.timerNote.textContent = "продолжите, когда будете готовы.";
       els.timerToggle.textContent = "продолжить";
       els.timerToggle.setAttribute("aria-pressed", "true");
       updateTimerDisplay(Core.remainingFromSession(session, Date.now()));
@@ -596,7 +596,7 @@
     els.timerToggle.textContent = "продолжить";
     els.timerToggle.setAttribute("aria-pressed", "true");
     els.timerCaption.textContent = "пауза";
-    els.timerNote.textContent = "продолжи, когда будешь готов.";
+    els.timerNote.textContent = "продолжите, когда будете готовы.";
     writeState();
     tickTimer();
     announce("таймер на паузе.");
@@ -619,9 +619,9 @@
     const name = file.name.toLowerCase();
     if (name.endsWith(".csv")) return Core.parseCsv(text);
     if (name.endsWith(".json")) {
-      try { return JSON.parse(text); } catch { throw new Error("не удалось разобрать json. проверь файл и попробуй ещё раз."); }
+      try { return JSON.parse(text); } catch { throw new Error("не удалось разобрать json. проверьте файл и попробуйте ещё раз."); }
     }
-    throw new Error("выбери файл json или csv.");
+    throw new Error("выберите файл json или csv.");
   }
 
   els.start.addEventListener("click", nextTask);
@@ -682,7 +682,7 @@
       const others = state.customTasks.filter((task) => task.id !== editingTaskId);
       const result = Core.mergeCustomTasks(others, [payload], baseTasks);
       if (!result.added.length) {
-        setMessage("проверь поля: такая задача уже есть или данные не подходят.", true);
+        setMessage("проверьте поля: такая задача уже есть или данные не подходят.", true);
         return;
       }
       state.customTasks = state.customTasks.map((task) => task.id === editingTaskId ? result.added[0] : task);
@@ -699,13 +699,13 @@
     }
     const result = Core.mergeCustomTasks(state.customTasks, [payload], baseTasks);
     if (!result.added.length) {
-      setMessage("проверь поля: такая задача уже есть или данные не подходят.", true);
+      setMessage("проверьте поля: такая задача уже есть или данные не подходят.", true);
       return;
     }
     state.customTasks = result.tasks;
     resetForm();
     const saved = writeState();
-    if (saved) setMessage("задача добавлена в твой набор.");
+    if (saved) setMessage("задача добавлена в ваш набор.");
     markCustomTask(result.added[0].id);
     announce("своя задача добавлена.");
   });
@@ -723,7 +723,7 @@
     els.message.setAttribute("aria-busy", "true");
     setMessage("читаю файл…");
     try {
-      if (file.size > MAX_IMPORT_BYTES) throw new Error("файл слишком большой. лимит — 1 МБ.");
+      if (file.size > MAX_IMPORT_BYTES) throw new Error("файл слишком большой. лимит: 1 мб.");
       const incoming = Core.normalizeTasks(parseImportedFile(file, await file.text()));
       const result = Core.mergeCustomTasks(state.customTasks, incoming, baseTasks);
       if (!result.added.length) throw new Error("в файле не найдено новых корректных задач.");

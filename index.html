@@ -3,22 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="когда рука тянется к ленте — нажми кнопку. короткие занятия для перерыва за компьютером: размяться, переключиться или поиграть.">
+  <meta name="description" content="когда рука тянется к ленте, нажмите кнопку. короткие занятия для перерыва за компьютером: размяться, переключиться или поиграть.">
   <meta name="theme-color" content="#f7f8fa">
+  <meta property="og:title" content="boring button">
+  <meta property="og:description" content="короткие занятия для перерыва за компьютером: выбор настроения и времени, таймер и свой набор.">
+  <meta property="og:image" content="https://chebaturkin.github.io/boring-button/docs/screenshots/desktop.png">
+  <meta property="og:type" content="website">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="preload" href="assets/fonts/Literata-Variable.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/fonts/IBM-Plex-Mono-Variable.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="icon" href="assets/button.svg" type="image/svg+xml">
-  <title>boring button — короткое занятие для перерыва</title>
+  <title>boring button: короткое занятие для перерыва</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <a class="skip-link" href="#main">к содержанию</a>
   <div class="app-shell">
     <header class="topbar">
-      <a class="wordmark" translate="no" href="." aria-label="boring button — на главную"><span class="brand-dot" aria-hidden="true"></span>boring button</a>
+      <a class="wordmark" translate="no" href="." aria-label="boring button, на главную"><span class="brand-dot" aria-hidden="true"></span>boring button</a>
       <nav class="topnav" aria-label="навигация">
-        <span class="offline-label">после загрузки — без сети</span>
+        <span class="offline-label">после загрузки без сети</span>
         <a class="settings-link" href="#settings" aria-controls="settings">мой набор</a>
         <a class="repo-link site-only" href="https://github.com/chebaturkin/boring-button" target="_blank" rel="noopener noreferrer">github</a>
       </nav>
@@ -57,7 +61,7 @@
           <div class="task-stage" id="task-paper">
             <div class="empty-task" id="empty-task">
               <div class="button-orbit">
-                <button id="start-button" class="primary-button" type="button"><span class="button-face"><span class="button-label">дай<br>занятие</span></span></button>
+                <button id="start-button" class="primary-button" type="button"><span class="button-face"><span class="button-label">дайте<br>занятие</span></span></button>
               </div>
               <p class="button-hint">одно занятие. таймер начнётся сразу.</p>
             </div>
@@ -93,35 +97,35 @@
             <button id="another-button" class="action-button action-another" type="button" aria-label="ещё одно занятие">другое</button>
           </div>
           <button id="hide-task-button" class="text-button task-hide" type="button" hidden>больше не предлагать</button>
-          <p class="sr-only" id="task-help">d — сделано · s — пропустить · n — другое занятие. таймер можно поставить на паузу.</p>
+          <p class="sr-only" id="task-help">d: сделано · s: пропустить · n: другое занятие. таймер можно поставить на паузу.</p>
         </div>
       </section>
 
-      <div class="under-workspace"><p class="quiet-stat" aria-label="локальная статистика">завершено сегодня <strong id="today-count">0</strong><span class="stat-divider" aria-hidden="true">/</span> всего <strong id="completed-count">0</strong></p><p class="privacy-note">без аккаунта. всё остаётся у тебя.</p></div>
+      <div class="under-workspace"><p class="quiet-stat" aria-label="локальная статистика">завершено сегодня <strong id="today-count">0</strong><span class="stat-divider" aria-hidden="true">/</span> всего <strong id="completed-count">0</strong></p><p class="privacy-note">без аккаунта. всё остаётся у вас.</p></div>
 
 
       <details class="favorites-library" id="favorites-library">
         <summary><span>сохранённые занятия</span><span class="summary-count"><strong id="favorite-count">0</strong> сохранено</span></summary>
-        <div class="library-body"><p id="favorites-empty" class="custom-empty">нажми ♡ у занятия — оно появится здесь.</p><p id="favorites-note" class="custom-empty" hidden>здесь можно начать любое сохранённое занятие. фильтр времени действует на случайный выбор кнопкой.</p><ul id="favorite-list" class="favorite-list"></ul></div>
+        <div class="library-body"><p id="favorites-empty" class="custom-empty">нажмите ♡ у занятия, и оно появится здесь.</p><p id="favorites-note" class="custom-empty" hidden>здесь можно начать любое сохранённое занятие. фильтр времени действует на случайный выбор кнопкой.</p><ul id="favorite-list" class="favorite-list"></ul></div>
       </details>
       <details class="settings" id="settings">
         <summary><span>мои задачи</span><span class="summary-count"><strong id="task-count">0</strong> в наборе</span></summary>
         <div class="settings-body">
           <div class="settings-column">
-            <p class="settings-intro">добавь занятие, которое хочется сделать.</p>
+            <p class="settings-intro">добавьте занятие, которое хочется сделать.</p>
             <form id="custom-form" class="custom-form" autocomplete="off">
               <label>название<input name="title" type="text" maxlength="80" required placeholder="например, полить цветок"></label>
-              <label>что сделать<textarea name="prompt" rows="3" maxlength="240" required placeholder="проверь землю и полей, если она сухая"></textarea></label>
+              <label>что сделать<textarea name="prompt" rows="3" maxlength="240" required placeholder="проверьте землю и полейте, если она сухая"></textarea></label>
               <div class="form-row"><label>время<select name="duration"><option value="10">10 секунд</option><option value="30">30 секунд</option><option value="60" selected>1 минута</option><option value="120">2 минуты</option></select></label><label>раздел<select name="category"><option value="своё">своё</option><option value="движение">движение</option><option value="внимание">внимание</option><option value="порядок">порядок</option><option value="наблюдение">наблюдение</option><option value="мини-игра">мини-игра</option></select></label></div>
               <button id="custom-submit" class="secondary-button" type="submit">добавить задачу</button><button id="cancel-edit-button" class="text-button" type="button" hidden>отмена</button>
             </form>
             <div class="custom-library" aria-labelledby="custom-library-title"><div class="custom-library-heading"><h3 id="custom-library-title">добавленные задачи</h3><span id="custom-task-count">0</span></div><p id="custom-empty" class="custom-empty">пока пусто. можно начать с одного любимого дела.</p><ul id="custom-task-list" class="custom-task-list"></ul></div>
           </div>
-          <div class="settings-column settings-tools"><p class="settings-intro">свои задачи можно перенести в другой браузер. скачай файл и добавь его там.</p><label class="file-button">добавить из json или csv<input id="import-file" type="file" accept=".json,.csv,application/json,text/csv"></label><button id="export-button" class="secondary-button" type="button">скачать свои задачи</button><button id="reset-button" class="text-button" type="button">удалить свои задачи</button><button id="reset-stats-button" class="text-button" type="button">сбросить статистику</button><p id="settings-message" class="settings-message" role="status" aria-live="polite"></p></div>
+          <div class="settings-column settings-tools"><p class="settings-intro">свои задачи можно перенести в другой браузер. скачайте файл и добавьте его там.</p><label class="file-button">добавить из json или csv<input id="import-file" type="file" accept=".json,.csv,application/json,text/csv"></label><button id="export-button" class="secondary-button" type="button">скачать свои задачи</button><button id="reset-button" class="text-button" type="button">удалить свои задачи</button><button id="reset-stats-button" class="text-button" type="button">сбросить статистику</button><p id="settings-message" class="settings-message" role="status" aria-live="polite"></p></div>
         </div>
         <details id="hidden-library" class="hidden-library">
           <summary><span>скрытые занятия</span><span class="summary-count"><strong id="hidden-count">0</strong> скрыто</span></summary>
-          <div class="library-body"><p id="hidden-empty" class="custom-empty">здесь появятся занятия, которые ты решил больше не получать.</p><ul id="hidden-task-list" class="custom-task-list"></ul></div>
+          <div class="library-body"><p id="hidden-empty" class="custom-empty">здесь появятся занятия, которые вы решили больше не получать.</p><ul id="hidden-task-list" class="custom-task-list"></ul></div>
         </details>
       </details>
     </main>
