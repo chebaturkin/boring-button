@@ -1,4 +1,4 @@
-[english](README.md) · русский
+[english](README.md) · **русский**
 
 # boring button: расширение
 

@@ -1,6 +1,6 @@
-# boring button: extension
+**english** · [русский](README.ru.md)
 
-english · [русский](README.ru.md)
+# boring button: extension
 
 a short activity for a break at your computer. choose a mood and duration, press the blue button and take 10 to 120 seconds away from the feed.
 

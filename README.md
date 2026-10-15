@@ -1,8 +1,8 @@
+**english** · [русский](README.ru.md)
+
 <p><img src="assets/button.svg" width="64" height="64" alt="a blue button on a pale background"></p>
 
 # boring button
-
-english · [русский](README.ru.md)
 
 short activities for a break at your computer. choose a mood and duration, press the button and get one thing to do: move, reset, tidy up or play. a pause takes between 10 seconds and two minutes.
 
@@ -32,9 +32,11 @@ the quiet **ru / en** control changes the interface in place. a `?lang=en` or `?
 if no activity matches, the interface suggests more time, another category or restoring a hidden activity.
 
 <details>
-<summary>an active task, extension popup and mobile screen</summary>
+<summary>an active task, completion, extension popup and mobile screen</summary>
 
 ![an activity with a paused timer and completion controls](docs/screenshots/en/active-task.png)
+
+![completed break with an updated counter and a way back to the button](docs/screenshots/en/complete.png)
 
 <p><img src="docs/screenshots/en/popup.png" width="320" alt="extension popup with activity controls and the blue button"></p>
 <p><img src="docs/screenshots/en/mobile.png" width="390" alt="mobile screen with an active task and timer"></p>
@@ -106,7 +108,7 @@ static html, css and javascript. no build or runtime dependencies.
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-open the [local site](http://127.0.0.1:8000). [github pages setup](docs/github-pages.md) is documented separately.
+open the [local site in english](http://127.0.0.1:8000/?lang=en). you can also open `index.html` directly; a local server is useful for browser checks and the extension preview.
 
 the interface lives in `index.html`, `styles.css`, `app.js`, `core.js` and `i18n.js`. `tasks.json` is the canonical built-in task library. `extension/` contains the ready to load extension. local literata and ibm plex mono fonts and their licenses are in `assets/fonts/`.
 
@@ -120,7 +122,14 @@ node --check app.js
 node --check extension/popup.js
 ```
 
-browser checks and screenshot capture need playwright:
+browser checks and screenshot capture need node.js, playwright and chromium. install the optional check tools in the repository root:
+
+```bash
+npm install --no-save --package-lock=false playwright
+npx playwright install chromium
+```
+
+keep the local server running, then run the checks. the last command refreshes the english and russian readme images:
 
 ```bash
 BORING_BUTTON_URL=http://127.0.0.1:8000 node scripts/verify-workspace.cjs
@@ -133,4 +142,18 @@ BORING_BUTTON_URL=http://127.0.0.1:8000 node scripts/capture-screenshots.cjs
 
 checks cover filters, complete selection rounds, hiding and restoring, favorites, timer recovery, completion, keyboard, custom tasks, imports/exports, two tabs, both languages and mobile widths. the motion check also covers reduced motion, touch, 200 custom tasks, offline use and `file://`.
 
-check extension installation and recovery after closing the popup separately through `chrome://extensions`. inspirations and licenses are in the [research notes](docs/analogues.md).
+check extension installation and recovery after closing the popup separately through `chrome://extensions`.
+
+## publication
+
+the repository root is a ready static site. in github **settings → pages**, select **deploy from a branch**, `main` and `/ (root)`. `.nojekyll` keeps files unprocessed; relative asset paths also work under a repository subpath. updates appear after the pages deployment completes.
+
+## fonts and references
+
+the bundled fonts retain their licenses: [literata](assets/fonts/OFL-Literata.txt) and [ibm plex mono](assets/fonts/LICENSE-IBM-Plex-Mono.txt). the extension includes the same fonts and notices.
+
+these projects informed the interaction design. their code, activities and assets are not included:
+
+- [stretchly selection](https://github.com/hovancik/stretchly/blob/3d87a189c6c7ca8281955834cb59c41f3ceccfa7/app/utils/shuffled.js): a complete round before repeating and disabled activities; [bsd-2-clause](https://github.com/hovancik/stretchly/blob/3d87a189c6c7ca8281955834cb59c41f3ceccfa7/LICENSE).
+- [breaktimer progress](https://github.com/tom-james-watson/breaktimer-app/blob/2d672434e9807d11ba91d126eaccfabd6af6931b/app/renderer/components/break/break-progress.tsx): deadline-based timing; [gpl-3.0](https://github.com/tom-james-watson/breaktimer-app/blob/2d672434e9807d11ba91d126eaccfabd6af6931b/LICENSE.md).
+- [pomotroid shortcuts](https://github.com/Splode/pomotroid/blob/dda06e6bf412bebe5ef8668a4357c52d974dc874/src/lib/utils/localShortcuts.ts): commands that respect text input; [mit](https://github.com/Splode/pomotroid/blob/dda06e6bf412bebe5ef8668a4357c52d974dc874/LICENSE).
